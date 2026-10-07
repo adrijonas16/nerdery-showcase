@@ -62,7 +62,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
               gap: "16px",
             }}
           >
@@ -110,7 +110,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
                   overflow: "hidden",
                   border: "2px solid rgba(239,68,68,0.2)",
                   backgroundColor: "#f6f2e7",
-                  height: "600px",
+                  height: "min(600px, 70vh)",
                 }}
               >
                 <iframe
@@ -165,7 +165,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
                   overflow: "hidden",
                   border: "2px solid rgba(52,211,153,0.2)",
                   backgroundColor: "#f6f2e7",
-                  height: "600px",
+                  height: "min(600px, 70vh)",
                 }}
               >
                 <iframe
@@ -249,7 +249,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
                 overflow: "hidden",
                 border: `2px solid ${expanded === "before" ? "rgba(239,68,68,0.2)" : "rgba(52,211,153,0.2)"}`,
                 backgroundColor: "#f6f2e7",
-                height: "700px",
+                height: "min(700px, 75vh)",
               }}
             >
               <iframe

@@ -151,7 +151,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
             transition={{ delay: 0.1 }}
             style={{
               display: "grid",
-              gridTemplateColumns: `repeat(${project.stats.length}, 1fr)`,
+              gridTemplateColumns: `repeat(auto-fit, minmax(120px, 1fr))`,
               gap: "16px",
               marginBottom: "32px",
             }}

@@ -3,3 +3,5 @@ server/node_modules
 server/comments.db
 .claude/
 dist/
+
+.vercel
