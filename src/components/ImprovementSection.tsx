@@ -267,6 +267,52 @@ export function ImprovementSection({
                           {imp.description}
                         </p>
 
+                        {imp.code && (
+                          <div style={{ marginTop: "12px" }}>
+                            <div
+                              style={{
+                                fontSize: "11px",
+                                fontWeight: 600,
+                                textTransform: "uppercase",
+                                letterSpacing: "0.05em",
+                                color: "#64748b",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              {imp.code.file}
+                            </div>
+                            {imp.code.before && (
+                              <div
+                                style={{
+                                  padding: "12px 16px",
+                                  borderRadius: "10px 10px 0 0",
+                                  backgroundColor: "rgba(239,68,68,0.05)",
+                                  border: "1px solid rgba(239,68,68,0.15)",
+                                  borderBottom: "none",
+                                }}
+                              >
+                                <div style={{ fontSize: "10px", fontWeight: 700, color: "#f87171", marginBottom: "6px", textTransform: "uppercase" }}>Before</div>
+                                <pre style={{ margin: 0, color: "#f87171", fontSize: "12px", fontFamily: "monospace", whiteSpace: "pre-wrap", wordBreak: "break-word", opacity: 0.8 }}>
+                                  {imp.code.before}
+                                </pre>
+                              </div>
+                            )}
+                            <div
+                              style={{
+                                padding: "12px 16px",
+                                borderRadius: imp.code.before ? "0 0 10px 10px" : "10px",
+                                backgroundColor: "rgba(52,211,153,0.05)",
+                                border: "1px solid rgba(52,211,153,0.15)",
+                              }}
+                            >
+                              <div style={{ fontSize: "10px", fontWeight: 700, color: "#34d399", marginBottom: "6px", textTransform: "uppercase" }}>{imp.code.before ? "After" : "Code"}</div>
+                              <pre style={{ margin: 0, color: "#34d399", fontSize: "12px", fontFamily: "monospace", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                                {imp.code.after}
+                              </pre>
+                            </div>
+                          </div>
+                        )}
+
                         {imp.prompt && (
                           <div
                             style={{

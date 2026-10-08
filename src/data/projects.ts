@@ -9,6 +9,7 @@ export interface ProposedImprovement {
   description: string;
   prompt?: string;
   skills?: string[];
+  code?: { before?: string; after: string; file: string };
 }
 
 export interface ComparisonPair {
@@ -231,7 +232,7 @@ export const areas: Area[] = [
         ],
         improvements: [
           "FIX-01: Investigated JWT disabled user bug - confirmed false positive, validate() already checks status",
-          "FIX-02: Race condition in order creation - moved ALL checkout logic inside Prisma $transaction",
+          "FIX-02: Race condition in order creation - moved ALL checkout logic inside Prisma $transaction. If two requests arrive simultaneously, the second sees the cart as 'converted' and fails safely",
           "FIX-03: Full delivery system - GET /orders/delivery-persons with workload, PATCH assign-delivery with capacity limit",
           "FIX-04: Duplicate PaymentIntents - reuses existing intent if still active in Stripe via retrieve()",
           "FIX-05: Demo payment stock validation - same checks as the real webhook flow",
@@ -266,23 +267,65 @@ export const areas: Area[] = [
         liveUrl: "https://tshirt-frontend-gilt.vercel.app/",
         stats: [
           { label: "Endpoints", value: "27+" },
-          { label: "Issues Found", value: "24" },
           { label: "Fixes Applied", value: "13" },
+          { label: "Tests Passing", value: "100" },
         ],
         whatILearned: "I learned to do a full audit of a production backend: identify race conditions, validate Prisma transactions, understand Stripe payment flows, and document issues with severity and fix plans. The most important lesson: the most dangerous bugs are concurrency bugs - two requests at the same time can create corrupt data if they're not inside a transaction.",
         toolsUsed: ["Claude Code", "/investigate-task", "/verify-change", "/security-check", "/db-check", "/api-contract-check", "/test-coverage", "NestJS", "Prisma", "Jest"],
         proposedImprovements: [
           {
-            title: "FIX-14 to FIX-24: remaining P2-P3 issues (next steps)",
-            description: "11 issues documented with fix plans: JWT stale after email update, cart stock warning field, notifications pagination, likes on disabled products, payment link transaction, inconsistent order response shapes, categories CRUD, address deletion safety, cart quantity limit, low-stock detection improvement, decimal precision helper.",
-            prompt: "/investigate-task review FIXES-PENDIENTES.md FIX-14 through FIX-24. For each, estimate effort and impact. Prioritize using RICE.",
-            skills: ["/investigate-task", "RICE prioritization"],
+            title: "FIX-02: Race condition - entire checkout inside $transaction",
+            description: "Before: cart lookup, stock validation, and promo validation ran outside the transaction. Two concurrent requests could both find the same active cart and create duplicate orders.",
+            code: {
+              before: "// Cart lookup OUTSIDE transaction\nconst cart = await this.prisma.cart.findFirst({\n  where: { userId, status: 'active' },\n});\n// ... validate stock, promo ...\n// Transaction only for order creation\nawait this.prisma.$transaction(async (tx) => {\n  // Create order\n});",
+              after: "// EVERYTHING inside the transaction\nconst order = await this.prisma.$transaction(async (tx) => {\n  // Cart lookup INSIDE transaction\n  const cart = await tx.cart.findFirst({\n    where: { userId, status: 'active' },\n  });\n  // Validate stock INSIDE transaction\n  // Validate promo INSIDE transaction\n  // Create order, clean cart items, mark converted\n  await tx.cartItem.deleteMany({ where: { cartId: cart.id } });\n  await tx.cart.update({ where: { id: cart.id }, data: { status: 'converted' } });\n  return created;\n});",
+              file: "src/orders/orders.service.ts",
+            },
+            skills: ["Prisma $transaction", "Race condition prevention"],
           },
           {
-            title: "Increase test coverage for the 13 applied fixes",
-            description: "Each fix has updated mocks but some paths need deeper tests: concurrent order creation (FIX-02), delivery capacity at the limit (FIX-03), expired PaymentIntent recovery (FIX-04), per-user promo with edge cases (FIX-08), stock restoration on cancellation (FIX-10).",
-            prompt: "/test-coverage all - identify modules with untested critical paths in the 13 applied fixes and suggest test cases",
-            skills: ["/test-coverage", "Jest", "@nestjs/testing"],
+            title: "FIX-07: Disabled products blocked from cart (one-line fix)",
+            description: "A manager could disable a product without deleting it, but clients could still add it to their cart because the status check was missing.",
+            code: {
+              before: "if (!sku || !sku.isActive || sku.product.deletedAt) {\n  throw new NotFoundException('Product SKU not found or inactive');\n}",
+              after: "if (!sku || !sku.isActive || sku.product.deletedAt\n    || sku.product.status !== 'active') {\n  throw new NotFoundException('Product SKU not found or inactive');\n}",
+              file: "src/cart/cart.service.ts:74-81",
+            },
+            skills: ["Input validation", "Defense in depth"],
+          },
+          {
+            title: "FIX-08: Per-user promo code limit",
+            description: "A user could use the same promo code on multiple orders because the validation only checked the global redemption count, not per-user.",
+            code: {
+              after: "// After global limit check, verify per-user limit\nconst userRedemption = await tx.promoCodeRedemption.findFirst({\n  where: { promoCodeId: promo.id, userId },\n});\nif (userRedemption) {\n  throw new BadRequestException(\n    'You have already used this promo code',\n  );\n}",
+              file: "src/orders/orders.service.ts:134-142",
+            },
+            skills: ["/security-check", "Per-user validation"],
+          },
+          {
+            title: "FIX-12: Webhook idempotency made atomic",
+            description: "Before: findUnique + create as separate operations. Two identical webhooks arriving simultaneously could both pass findUnique and the second would cause a 500 error.",
+            code: {
+              before: "// Check if already processed\nconst existing = await this.prisma.stripeWebhookEvent.findUnique({\n  where: { stripeEventId: event.id },\n});\nif (existing) return { received: true, duplicate: true };\n// Create record\nawait this.prisma.stripeWebhookEvent.create({ ... });",
+              after: "// Atomic: try to create, catch duplicate\ntry {\n  await this.prisma.stripeWebhookEvent.create({\n    data: { stripeEventId: event.id, eventType: event.type, ... },\n  });\n} catch (error: any) {\n  if (error.code === 'P2002') {\n    return { received: true, duplicate: true };\n  }\n  throw error;\n}",
+              file: "src/webhooks/webhooks.service.ts:56-72",
+            },
+            skills: ["Idempotency", "Prisma P2002"],
+          },
+          {
+            title: "Final review: 3 gaps our own fixes introduced",
+            description: "After applying FIX-10 (stock reserved on order creation), we found that createPaymentLink (direct purchase) and processPaymentFailure were not updated. The review caught these consistency gaps and fixed them. 100 tests passing after all fixes.",
+            code: {
+              after: "// createPaymentLink now decrements stock inside $transaction\nawait tx.productVariant.update({\n  where: { id: item.productVariantId },\n  data: { stock: { decrement: item.quantity } },\n});\n\n// processPaymentFailure now restores stock\nfor (const item of order.items) {\n  await tx.productVariant.update({\n    where: { id: item.productVariantId },\n    data: { stock: { increment: item.quantity } },\n  });\n}",
+              file: "src/payments/payments.service.ts + src/webhooks/webhooks.service.ts",
+            },
+            skills: ["Consistency review", "Stock flow integrity"],
+          },
+          {
+            title: "FIX-14 to FIX-24: remaining P2-P3 issues (next steps)",
+            description: "11 issues documented with fix plans: JWT stale after email update, cart stock warning, notifications pagination, likes on disabled products, payment link transaction, inconsistent order responses, categories CRUD, address deletion, cart quantity limit, low-stock detection, decimal precision.",
+            prompt: "/investigate-task review FIXES-PENDIENTES.md FIX-14 through FIX-24. For each, estimate effort and impact.",
+            skills: ["/investigate-task", "RICE prioritization"],
           },
           {
             title: "Use descriptive variable names in services",
