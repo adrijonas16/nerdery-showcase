@@ -193,9 +193,13 @@ export const areas: Area[] = [
         techStack: ["HTML", "CSS", "JavaScript"],
         liveUrl: "https://week1-showcase.vercel.app",
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
-        media: [
-          { type: "image", src: "/media/frontend/week1-showcase-desktop.png", caption: "Week 1 Showcase - desktop view" },
-          { type: "image", src: "/media/frontend/week1-showcase-mobile.png", caption: "Week 1 Showcase - mobile view (375px)" },
+        comparisons: [
+          {
+            before: "/media/frontend/figma-week1-design.png",
+            after: "/media/frontend/week1-live-desktop.png",
+            label: "Figma design vs live implementation",
+            description: "Left: the Figma design we received. Right: our implementation deployed on Vercel. Built with semantic HTML, BEM classes, CSS custom properties, and responsive breakpoints.",
+          },
         ],
       },
     ],
