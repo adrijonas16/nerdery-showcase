@@ -478,8 +478,8 @@ export const areas: Area[] = [
         liveComparison: {
           beforeUrl: "/vello-before/index.html",
           afterUrl: "/vello-after/index.html",
-          beforeLabel: "Claude's first generation (hardcoded hex, div, no states)",
-          afterLabel: "After audit & guardrail evolution (semantic tokens, button, all states)",
+          beforeLabel: "NeighborCard - first delivery",
+          afterLabel: "NeighborCard - after design audit and fixes",
         },
         comparisons: [
           {
