@@ -37,7 +37,17 @@ export function CommentsSection({ projectId, areaColor }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !comment.trim() || !API_URL) return;
+    console.log("hola anel, el boton funciona!");
+    console.log("name:", name, "comment:", comment, "API_URL:", API_URL);
+    if (!name.trim() || !comment.trim()) {
+      console.log("validation failed - name or comment is empty");
+      return;
+    }
+    if (!API_URL) {
+      console.log("API_URL is null - running in production, comments disabled");
+      return;
+    }
+    console.log("sending comment to:", API_URL);
 
     setSubmitting(true);
     try {
