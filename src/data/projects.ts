@@ -243,7 +243,7 @@ export const areas: Area[] = [
           "Redis",
         ],
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
-        liveUrl: "https://tshirt-frontend-git-ai-module-skills-assignment-adrijonas16.vercel.app",
+        liveUrl: "https://tshirt-frontend-gilt.vercel.app/",
         stats: [
           { label: "Endpoints", value: "27+" },
           { label: "Issues Found", value: "24" },
