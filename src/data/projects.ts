@@ -525,21 +525,12 @@ export const areas: Area[] = [
           { type: "image", src: "/media/design/neighbor-keyboard-focus.png", caption: "Keyboard focus - visible outline for accessibility" },
           { type: "image", src: "/media/design/original-reference.jpg", caption: "Original reference image - the design we received with issues to find and fix" },
         ],
-        liveUrl: "/vello-app/index.html",
         liveComparison: {
           beforeUrl: "/vello-before/index.html",
           afterUrl: "/vello-after/index.html",
           beforeLabel: "Vello app (original - design issues)",
           afterLabel: "Vello app (NeighborCard with contrast fixes)",
         },
-        comparisons: [
-          {
-            before: "/media/design/original-reference.jpg",
-            after: "/media/design/neighbor-card-closeup.png",
-            label: "Original reference vs corrected NeighborCard",
-            description: "Left: the reference we received - Available badge in coral/red (fails WCAG at 4.10:1), 'from $24' for a fixed price. Right: corrected NeighborCard with green Available badge (5.70:1), proper price format, semantic tokens, photo with verified mark.",
-          },
-        ],
         stats: [
           { label: "CLAUDE.md Versions", value: "3" },
           { label: "Errors Found", value: "15" },
