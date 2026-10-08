@@ -467,14 +467,14 @@ export const areas: Area[] = [
         ],
         repoUrl: "https://github.com/adrianachipana-lab/vello-provider-card-deliverable",
         media: [
-          { type: "image", src: "/media/design/react-component-vouched.png", caption: "Corrected React component - named vouch state" },
-          { type: "image", src: "/media/design/react-state-not-available.png", caption: "'Not available' state - the absence of the badge IS the information" },
-          { type: "image", src: "/media/design/react-state-perfect-rating.png", caption: "Perfect rating state - 5 stars via DS Rating" },
-          { type: "image", src: "/media/design/react-keyboard-focus.png", caption: "Accessibility: visible keyboard focus (4.77:1 contrast)" },
-          { type: "image", src: "/media/design/prototype-full.png", caption: "Full Vello prototype - card integrated in the native list" },
-          { type: "image", src: "/media/design/prototype-card-closeup.png", caption: "Closeup: 64px avatar, VerifiedMark, Available badge, footprints distance" },
-          { type: "image", src: "/media/design/prototype-trusted-section.png", caption: "'Trusted on your block' section - the card looks like any other" },
-          { type: "image", src: "/media/design/prototype-home-top.png", caption: "Home: search and open request stay above, hierarchy respected" },
+          { type: "image", src: "/media/design/neighbor-app-full.png", caption: "NeighborCard app - full view with state switcher and audit panel" },
+          { type: "image", src: "/media/design/neighbor-card-closeup.png", caption: "NeighborCard closeup - photo, verified mark, Available badge, footprints, 5-star rating" },
+          { type: "image", src: "/media/design/neighbor-state-available--featured.png", caption: "Available + featured state" },
+          { type: "image", src: "/media/design/neighbor-state-not-available.png", caption: "Not available state - the absence of the badge IS the information" },
+          { type: "image", src: "/media/design/neighbor-state-perfect-rating.png", caption: "Perfect rating state - all 5 stars filled" },
+          { type: "image", src: "/media/design/neighbor-card-hover.png", caption: "Hover state - elevation and shadow change" },
+          { type: "image", src: "/media/design/neighbor-keyboard-focus.png", caption: "Keyboard focus - visible outline for accessibility" },
+          { type: "image", src: "/media/design/original-reference.jpg", caption: "Original reference image - the design we received with issues to find and fix" },
         ],
         liveComparison: {
           beforeUrl: "/vello-before/index.html",
@@ -485,9 +485,9 @@ export const areas: Area[] = [
         comparisons: [
           {
             before: "/media/design/original-reference.jpg",
-            after: "/media/design/v3-card-closeup.png",
-            label: "Original reference image vs corrected NeighborCard",
-            description: "Left: the reference we were given with design issues (Available badge in coral/red, 'from $24' for a fixed price). Right: corrected NeighborCard with green Available badge (5.70:1 contrast), proper price, semantic tokens.",
+            after: "/media/design/neighbor-card-closeup.png",
+            label: "Original reference vs corrected NeighborCard",
+            description: "Left: the reference we received - Available badge in coral/red (fails WCAG at 4.10:1), 'from $24' for a fixed price. Right: corrected NeighborCard with green Available badge (5.70:1), proper price format, semantic tokens, photo with verified mark.",
           },
         ],
         stats: [
