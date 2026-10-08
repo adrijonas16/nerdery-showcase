@@ -625,7 +625,7 @@ export const areas: Area[] = [
           "Persona with substance: Laura, 28, analyst, with real context (phone, lunch breaks, 5-10 min sessions), concrete pains (burned twice driving 25 min), and current workaround (cross-checks Facebook Marketplace, buys new at IKEA)",
           "Non-vanity North Star: 'Weekly qualified connections' - only goes up when buyer contacts AND seller replies. Not views, not signups",
           "7 candidate features, each traceable to the problem. 0 orphan features in North Star check",
-          "RICE with honest confidence scores: price comparison at 35% because there's no sales data, condition label at 90% because it's simple",
+          "RICE with realistic reach estimates (users per quarter, not inflated) and honest confidence scores: price comparison at 35% because there's no sales data, condition label at 90% because it's simple",
           "MVP 'trust trio': condition label + multi-angle photos + flaw disclosure. Each attacks a different aspect of the same trust problem",
           "Sensitivity analysis: stress-test of what happens if scores change - the MVP holds in most scenarios",
           "Guardrail metrics: listing completion rate can't drop more than 10%, time-to-list can't increase more than 3 min",
@@ -634,7 +634,7 @@ export const areas: Area[] = [
           "Go/no-go with 4 ship criteria, quantified rollback trigger (contact rate drops 5% or listing completion drops 10%), and post-launch metrics",
         ],
         beforeDescription:
-          "What we built:\n\n- Problem Frame: specific problem statement, persona (Laura, 28) with JTBD, North Star (weekly qualified connections), value proposition\n- Mini-PRD: 7 candidate features, requirements with measurable thresholds (200ms, 3s per photo), MVP hypothesis with IN/OUT/WHY\n- Prioritization: RICE with honest confidence (price comparison at 35%), MoSCoW (only 3 Musts), Kano, sensitivity analysis, guardrail metrics, dependency map\n- Delivery: acceptance criteria with happy + 3 unhappy paths, top 3 risks, go/no-go recommendation: GO\n- Video: 5-minute recorded presentation\n\nWhat can be better:\n\n- RICE scores use estimates, not real data - no user interviews to validate assumptions\n- No A/B test plan to verify the MVP actually moves the North Star\n- No competitive analysis to benchmark against Facebook Marketplace, Craigslist, etc.\n- Confidence percentages are honest guesses, not data-backed",
+          "What we built:\n\n- Problem Frame: specific problem statement, persona (Laura, 28) with JTBD, North Star (weekly qualified connections), value proposition\n- Mini-PRD: 7 candidate features, requirements with measurable thresholds (200ms, 3s per photo), MVP hypothesis with IN/OUT/WHY\n- Prioritization: RICE with realistic reach and honest confidence (price comparison at 35%), MoSCoW (only 3 Musts), Kano, sensitivity analysis, guardrail metrics, dependency map\n- Delivery: acceptance criteria with happy + 3 unhappy paths, top 3 risks, go/no-go recommendation: GO\n- Video: 5-minute recorded presentation\n\nWhat can be better:\n\n- RICE scores use estimates, not real data - no user interviews to validate assumptions\n- No A/B test plan to verify the MVP actually moves the North Star\n- No competitive analysis to benchmark against Facebook Marketplace, Craigslist, etc.\n- Confidence percentages are honest guesses, not data-backed",
         afterDescription:
           "What changed after feedback and how I improved it:\n\n- Mentor said requirements section had the response-time indicator (deferred to Next) instead of flaw disclosure (in MVP). I swapped them so the documented requirements match what we're actually building.\n- Mentor said NFRs are testable - I made sure every requirement has a number: 200ms on 4G, 3 seconds per photo upload, 500ms for the checklist load. No 'fast' or 'easy'.\n- I added sensitivity analysis after realizing RICE scores are only as good as the assumptions. Stress-tested: what if multi-angle photos confidence drops to 60%? MVP still holds.\n- I defined guardrail metrics to catch unintended damage: listing completion can't drop > 10%, time-to-list can't increase > 3 min. These protect against the risk of adding friction for sellers.\n- Acceptance criteria now cover unhappy paths: empty condition field blocks publish, legacy listings show 'Not specified', tooltip images are progressive enhancement.",
         notes:
@@ -651,7 +651,7 @@ export const areas: Area[] = [
         stats: [
           { label: "Features Evaluated", value: "7" },
           { label: "MVP Features", value: "3" },
-          { label: "RICE #1 Score", value: "10,800" },
+          { label: "RICE #1 Score", value: "480" },
         ],
         whatILearned: "I learned that a PM's job is to make trade-offs visible and defend them. A framework (RICE, MoSCoW) doesn't make the decision - you make it and you own it. The most important lesson: garbage in, garbage out - a RICE score with 100% confidence on everything is a made-up decision wearing a spreadsheet. I also learned that a genuine MVP feels 'uncomfortably small', and defending what's OUT is as important as what's IN.",
         toolsUsed: ["RICE Framework", "MoSCoW", "Kano Model", "Value vs Effort", "JTBD", "North Star Metric", "Now/Next/Later Roadmap", "Given/When/Then (AC)", "Claude Code"],
