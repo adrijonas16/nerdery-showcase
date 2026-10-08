@@ -116,7 +116,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
                 <iframe
                   src={beforeUrl}
                   title={beforeLabel}
-                  style={{ width: "100%", height: "100%", border: "none" }}
+                  style={{ width: "1200px", height: "900px", border: "none", transform: "scale(0.5)", transformOrigin: "top left" }}
                 />
               </div>
             </div>
@@ -171,7 +171,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
                 <iframe
                   src={afterUrl}
                   title={afterLabel}
-                  style={{ width: "100%", height: "100%", border: "none" }}
+                  style={{ width: "1200px", height: "900px", border: "none", transform: "scale(0.5)", transformOrigin: "top left" }}
                 />
               </div>
             </div>
@@ -255,7 +255,7 @@ export function LiveComparison({ beforeUrl, afterUrl, beforeLabel, afterLabel, a
               <iframe
                 src={expanded === "before" ? beforeUrl : afterUrl}
                 title={expanded === "before" ? beforeLabel : afterLabel}
-                style={{ width: "100%", height: "100%", border: "none" }}
+                style={{ width: "1200px", height: "900px", border: "none", transform: "scale(0.5)", transformOrigin: "top left" }}
               />
             </div>
           </div>

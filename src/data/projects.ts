@@ -243,6 +243,7 @@ export const areas: Area[] = [
           "Redis",
         ],
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
+        liveUrl: "https://tshirt-frontend-git-ai-module-skills-assignment-adrijonas16.vercel.app",
         stats: [
           { label: "Endpoints", value: "27+" },
           { label: "Issues Found", value: "24" },
@@ -485,26 +486,8 @@ export const areas: Area[] = [
           {
             before: "/media/design/original-reference.jpg",
             after: "/media/design/v3-card-closeup.png",
-            label: "Original reference vs corrected card",
-            description: "Left: the reference image we were given - notice the Available badge is coral/red (fails WCAG at 4.10:1), 'from $24' for a fixed price. Right: corrected card with green Available badge (5.70:1), proper price format, semantic tokens.",
-          },
-          {
-            before: "/media/design/v1-react-full.png",
-            after: "/media/design/v3-react-full.png",
-            label: "React component - Claude's first pass vs final",
-            description: "Before: Claude generated a basic card with hardcoded hex colors (#16462F, #F6F2E7), a div instead of a button, initials instead of photo, MapPin instead of footprints, 1 star instead of 5, no Available badge, no states. After: semantic tokens, proper button, photo with verified mark, footprints, 5 stars, all states, token-fidelity audit panel.",
-          },
-          {
-            before: "/media/design/v1-prototype-mejorada.png",
-            after: "/media/design/v3-prototype-trusted.png",
-            label: "Prototype integration - before vs after",
-            description: "Before: 246px tall 'Mejorada' section above categories, 21px avatar with shield overlapping initials, duplicate verification, redundant CTA. After: 154-175px card inside 'Trusted on your block', 64px avatar, single VerifiedMark, same height as native cards.",
-          },
-          {
-            before: "/media/design/v1-prototype-top.png",
-            after: "/media/design/v3-prototype-top.png",
-            label: "Home page hierarchy",
-            description: "Before: the card dominated the top of the page above categories and the open request. After: search and open request stay above, the card is just another neighbor in the trusted list - hierarchy preserved.",
+            label: "Original reference image vs corrected NeighborCard",
+            description: "Left: the reference we were given with design issues (Available badge in coral/red, 'from $24' for a fixed price). Right: corrected NeighborCard with green Available badge (5.70:1 contrast), proper price, semantic tokens.",
           },
         ],
         stats: [

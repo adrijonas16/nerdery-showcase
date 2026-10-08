@@ -258,16 +258,27 @@ export function ProjectDetail({ project, areaColor }: Props) {
                     {project.liveUrl}
                   </span>
                 </div>
-                <iframe
-                  src={project.liveUrl}
-                  title={project.title}
+                <div
                   style={{
+                    position: "relative",
                     width: "100%",
-                    height: "500px",
-                    border: "none",
-                    backgroundColor: "#fff",
+                    height: "600px",
+                    overflow: "hidden",
                   }}
-                />
+                >
+                  <iframe
+                    src={project.liveUrl}
+                    title={project.title}
+                    style={{
+                      width: "1440px",
+                      height: "900px",
+                      border: "none",
+                      backgroundColor: "#fff",
+                      transform: "scale(0.65)",
+                      transformOrigin: "top left",
+                    }}
+                  />
+                </div>
               </div>
             </SectionCard>
           </div>
