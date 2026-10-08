@@ -1,8 +1,22 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Hero() {
   const [showEaster, setShowEaster] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSecretClick = () => {
+    const next = clickCount + 1;
+    setClickCount(next);
+    if (clickTimer.current) clearTimeout(clickTimer.current);
+    if (next >= 5) {
+      setShowEaster(!showEaster);
+      setClickCount(0);
+    } else {
+      clickTimer.current = setTimeout(() => setClickCount(0), 2000);
+    }
+  };
 
   return (
     <section
@@ -30,33 +44,6 @@ export function Hero() {
         }}
       />
 
-      {/* Floating certificates as background decoration */}
-      <div
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "-40px",
-          opacity: 0.06,
-          transform: "rotate(12deg)",
-          pointerEvents: "none",
-          width: "300px",
-        }}
-      >
-        <img src="/media/meme-cert-foundations.jpg" alt="" style={{ width: "100%", borderRadius: "12px" }} />
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          bottom: "20px",
-          left: "-30px",
-          opacity: 0.06,
-          transform: "rotate(-8deg)",
-          pointerEvents: "none",
-          width: "280px",
-        }}
-      >
-        <img src="/media/meme-cert-pro.jpg" alt="" style={{ width: "100%", borderRadius: "12px" }} />
-      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -78,9 +65,7 @@ export function Hero() {
             color: "#818cf8",
             fontSize: "14px",
             fontWeight: 500,
-            cursor: "pointer",
           }}
-          onClick={() => setShowEaster(!showEaster)}
         >
           RAVN Nerdery 2026
         </motion.div>
@@ -245,6 +230,7 @@ export function Hero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
+          onClick={handleSecretClick}
           style={{
             width: "24px",
             height: "40px",
@@ -255,6 +241,7 @@ export function Hero() {
             alignItems: "flex-start",
             justifyContent: "center",
             padding: "6px",
+            cursor: "default",
           }}
         >
           <div
