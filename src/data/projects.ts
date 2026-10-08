@@ -461,11 +461,11 @@ export const areas: Area[] = [
     tagline: "UI/UX, Figma, Design Systems",
     projects: [
       {
-        id: "vello-provider-card",
-        title: "Vello ProviderCard",
+        id: "vello-neighbor-card",
+        title: "Vello NeighborCard",
         tagline: "AI-first design week: from design foundations to faithful code",
         description:
-          "5-day AI-first design program on Vello, a hyperlocal neighbor services app. Covered the full design arc: foundations and vocabulary (Mon), discovery and research synthesis (Tue), UX architecture and flows (Wed), UI craft, systems and critique (Thu), and engineering handoff with a component audit (Fri). The Friday deliverable was a ProviderCard built with Claude, audited for token fidelity and accessibility.",
+          "5-day AI-first design program on Vello, a hyperlocal neighbor services app. Covered the full design arc: foundations and vocabulary (Mon), discovery and research synthesis (Tue), UX architecture and flows (Wed), UI craft, systems and critique (Thu), and engineering handoff with a component audit (Fri). The Friday deliverable was a NeighborCard built with Claude, audited for token fidelity and accessibility.",
         requirements: [
           "Monday: Design foundations - product/UX/UI/visual vocabulary, design process phases, engineering touchpoints",
           "Tuesday: Discovery - synthesize interview transcripts with Claude, audit themes against verbatim evidence, extract data entities",
@@ -531,9 +531,9 @@ export const areas: Area[] = [
           },
         ],
         stats: [
-          { label: "Final Score", value: "8.7" },
           { label: "CLAUDE.md Versions", value: "3" },
-          { label: "Errors Documented", value: "15" },
+          { label: "Errors Found", value: "15" },
+          { label: "Design Days", value: "5" },
         ],
         whatILearned: "I learned that design is not just how it looks, but how it's MEASURED. The mentor's feedback was clear: 'Add contrast ratios and other measured values to every audit.' I also learned that every element in a component answers a user question - the initials say 'hire a neighbor, not a stranger', the footprints say 'you can walk there'. Designing the absence (the unavailable state) is just as important as designing the presence.",
         toolsUsed: ["Claude Code", "CLAUDE.md (guardrail)", "Vello Design System", "Design Tokens", "WCAG Contrast Checker", "Playwright (screenshots)", "Vite"],
