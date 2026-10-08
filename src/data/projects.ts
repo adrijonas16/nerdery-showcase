@@ -559,8 +559,24 @@ export const areas: Area[] = [
           {
             title: "Add measured contrast ratios to every audit finding",
             description: "Feedback: 'Add contrast ratios and other measured values to every audit.' The original audit had no numbers. After adding measurements: focus ring was 1.52:1 (needs 3:1), Available badge was 4.10:1 (needs 4.5:1 at 12px). Numbers turn opinions into facts.",
-            prompt: "For every text/background pair in the ProviderCard and prototype, compute the WCAG contrast ratio. Format: pair name | hex values | computed ratio | pass/fail AA | pass/fail AAA. Flag anything below 4.5:1 for normal text or 3:1 for large text/UI components.",
+            prompt: "For every text/background pair in the NeighborCard and prototype, compute the WCAG contrast ratio. Format: pair name | hex values | computed ratio | pass/fail AA | pass/fail AAA. Flag anything below 4.5:1 for normal text or 3:1 for large text/UI components.",
             skills: ["WCAG", "WebAIM Contrast Checker"],
+          },
+          {
+            title: "CLAUDE.md guardrail: how we taught Claude the design system",
+            description: "We gave Claude the full Vello design system (tokens, components, prototype HTML) as context, then built a CLAUDE.md file that evolved through 3 versions. Each version fixed errors the previous one missed. This is how we controlled what Claude generated instead of just accepting the first output.",
+            code: {
+              before: "# CLAUDE.md v1 - too vague\n\n## Tokens\nOnly these six colors exist:\npaper #F6F2E7, forest #16462F, olive #557E26,\npersimmon #F0623B, amber #F4B740, ink #1B1C18.\n\n## Accessibility\nVerify color contrast.\n\n# Result: Claude used raw hex instead of\n# semantic tokens. 'Verified' contrast\n# without measuring it.",
+              after: "# CLAUDE.md v3 - rules + context + method\n\n## §0 Workflow (run every time)\n1. Look before building - read how the\n   prototype already solves it\n2. Map the data field by field\n3. Build from one source\n4. Verify with numbers (measure, don't assume)\n5. Record in the audit\n\n## §2 Tokens\nComponent CSS uses semantic tokens ONLY:\n--surface-card, --brand-primary, --text-muted\nNever raw hex, even if the value matches.\n\n## §8 Contrast (measured, not assumed)\n| Pair              | Ratio  | Verdict |\n| text-strong/card  | 17.13  | pass    |\n| text-brand/card   | 6.60   | pass    |\n| focus-ring/card   | 1.52   | FAIL    |\n\n# Result: Claude followed the method,\n# measured contrast, used correct tokens.",
+              file: "CLAUDE.md (v1 vs v3)",
+            },
+            skills: ["CLAUDE.md guardrail", "Prompt engineering", "Iterative improvement"],
+          },
+          {
+            title: "Giving Claude the full design context",
+            description: "Before generating any component, we loaded the Vello design system, the prototype HTML, and the product brief into Claude's context. This is what made the difference between Claude guessing and Claude following the system.",
+            prompt: "Context loaded before generation:\n1. Vello Design System (all tokens: colors, fonts, spacing, radii, shadows)\n2. Vello Prototype HTML (the real app with native .nb card structure)\n3. Product Brief (what Vello is, the 3 roles, the trust model)\n4. CLAUDE.md guardrail (rules, traced decisions, accessibility floor)\n\nThen: 'Generate a NeighborCard for Vello. Follow CLAUDE.md. Use the design system tokens, not raw hex. Match the native .nb structure from the prototype.'",
+            skills: ["Context engineering", "Design system", "Prototype reference"],
           },
         ],
         crossAreaInsights: [
