@@ -138,6 +138,28 @@ export function ProjectDetail({ project, areaColor }: Props) {
                   View code
                 </a>
               )}
+              {project.repoUrl && (
+                <a
+                  href={project.repoUrl + "/issues/new"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 20px",
+                    borderRadius: "10px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#cbd5e1",
+                    backgroundColor: "#334155",
+                    textDecoration: "none",
+                  }}
+                >
+                  <FileText style={{ width: "16px", height: "16px" }} />
+                  Leave feedback
+                </a>
+              )}
             </div>
           )}
         </div>
