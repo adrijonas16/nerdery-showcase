@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Send, User } from "lucide-react";
 
-const API_URL = "http://localhost:3003/api/comments";
+const IS_LOCAL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const API_URL = IS_LOCAL ? "http://localhost:3003/api/comments" : null;
 
 interface Comment {
   id: number;
@@ -25,6 +26,7 @@ export function CommentsSection({ projectId, areaColor }: Props) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!API_URL) { setLoading(false); return; }
     setLoading(true);
     fetch(`${API_URL}/${encodeURIComponent(projectId)}`)
       .then((r) => r.json())
@@ -35,7 +37,7 @@ export function CommentsSection({ projectId, areaColor }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !comment.trim()) return;
+    if (!name.trim() || !comment.trim() || !API_URL) return;
 
     setSubmitting(true);
     try {
