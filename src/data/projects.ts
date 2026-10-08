@@ -323,12 +323,6 @@ export const areas: Area[] = [
             skills: ["Consistency review", "Stock flow integrity"],
           },
           {
-            title: "FIX-14 to FIX-24: remaining P2-P3 issues (next steps)",
-            description: "11 issues documented with fix plans: JWT stale after email update, cart stock warning, notifications pagination, likes on disabled products, payment link transaction, inconsistent order responses, categories CRUD, address deletion, cart quantity limit, low-stock detection, decimal precision.",
-            prompt: "/investigate-task review FIXES-PENDIENTES.md FIX-14 through FIX-24. For each, estimate effort and impact.",
-            skills: ["/investigate-task", "RICE prioritization"],
-          },
-          {
             title: "Use descriptive variable names in services",
             description: "Mentor feedback: variables should explain what they hold. Instead of 'data' use 'orderData', 'paymentResult'. The name should tell you what's inside without reading the assignment.",
             prompt: "Audit variable names in all backend services. Find generic names like 'data', 'result', 'item' and suggest descriptive replacements. List as: file:line | current | suggested.",
