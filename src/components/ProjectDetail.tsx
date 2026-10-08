@@ -262,7 +262,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
                   style={{
                     position: "relative",
                     width: "100%",
-                    height: "600px",
+                    paddingBottom: "65%",
                     overflow: "hidden",
                   }}
                 >
@@ -270,11 +270,14 @@ export function ProjectDetail({ project, areaColor }: Props) {
                     src={project.liveUrl}
                     title={project.title}
                     style={{
-                      width: "1440px",
-                      height: "900px",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "166.67%",
+                      height: "166.67%",
                       border: "none",
                       backgroundColor: "#fff",
-                      transform: "scale(0.65)",
+                      transform: "scale(0.6)",
                       transformOrigin: "top left",
                     }}
                   />

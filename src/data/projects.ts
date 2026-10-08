@@ -476,6 +476,7 @@ export const areas: Area[] = [
           { type: "image", src: "/media/design/neighbor-keyboard-focus.png", caption: "Keyboard focus - visible outline for accessibility" },
           { type: "image", src: "/media/design/original-reference.jpg", caption: "Original reference image - the design we received with issues to find and fix" },
         ],
+        liveUrl: "/vello-app/index.html",
         liveComparison: {
           beforeUrl: "/vello-before/index.html",
           afterUrl: "/vello-after/index.html",
