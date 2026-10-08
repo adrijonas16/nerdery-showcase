@@ -530,7 +530,7 @@ export const areas: Area[] = [
           beforeUrl: "/vello-before/index.html",
           afterUrl: "/vello-after/index.html",
           beforeLabel: "Vello app (original - design issues)",
-          afterLabel: "Vello app (with our corrected NeighborCard)",
+          afterLabel: "Vello app (NeighborCard with contrast fixes)",
         },
         comparisons: [
           {
