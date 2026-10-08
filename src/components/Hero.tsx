@@ -1,6 +1,9 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Hero() {
+  const [showEaster, setShowEaster] = useState(false);
+
   return (
     <section
       style={{
@@ -11,6 +14,7 @@ export function Hero() {
         width: "100%",
       }}
     >
+      {/* Gradient orb */}
       <div
         style={{
           position: "absolute",
@@ -25,6 +29,34 @@ export function Hero() {
           pointerEvents: "none",
         }}
       />
+
+      {/* Floating certificates as background decoration */}
+      <div
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "-40px",
+          opacity: 0.06,
+          transform: "rotate(12deg)",
+          pointerEvents: "none",
+          width: "300px",
+        }}
+      >
+        <img src="/media/meme-cert-foundations.jpg" alt="" style={{ width: "100%", borderRadius: "12px" }} />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          bottom: "20px",
+          left: "-30px",
+          opacity: 0.06,
+          transform: "rotate(-8deg)",
+          pointerEvents: "none",
+          width: "280px",
+        }}
+      >
+        <img src="/media/meme-cert-pro.jpg" alt="" style={{ width: "100%", borderRadius: "12px" }} />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -46,7 +78,9 @@ export function Hero() {
             color: "#818cf8",
             fontSize: "14px",
             fontWeight: 500,
+            cursor: "pointer",
           }}
+          onClick={() => setShowEaster(!showEaster)}
         >
           RAVN Nerdery 2026
         </motion.div>
@@ -85,8 +119,123 @@ export function Hero() {
           Final deliverables from the Nerdery program. Each project includes
           requirements, improvements made, lessons learned, and a walkthrough video.
         </p>
+
+        {/* Certificates links */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "12px",
+            marginTop: "24px",
+            flexWrap: "wrap",
+          }}
+        >
+          <a
+            href="/media/cert-1.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: "6px 16px",
+              borderRadius: "999px",
+              fontSize: "12px",
+              fontWeight: 600,
+              backgroundColor: "rgba(251,146,60,0.1)",
+              color: "#fb923c",
+              border: "1px solid rgba(251,146,60,0.2)",
+              textDecoration: "none",
+            }}
+          >
+            Claude Certified Architect - Foundations
+          </a>
+          <a
+            href="/media/cert-2.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              padding: "6px 16px",
+              borderRadius: "999px",
+              fontSize: "12px",
+              fontWeight: 600,
+              backgroundColor: "rgba(139,92,246,0.1)",
+              color: "#a78bfa",
+              border: "1px solid rgba(139,92,246,0.2)",
+              textDecoration: "none",
+            }}
+          >
+            Claude Certified Architect - Professional
+          </a>
+        </div>
       </motion.div>
 
+      {/* Easter egg memes */}
+      <AnimatePresence>
+        {showEaster && (
+          <>
+            <motion.img
+              key="dk"
+              src="/media/meme-humildad.jpg"
+              alt="humildad"
+              initial={{ opacity: 0, scale: 0, rotate: -20 }}
+              animate={{ opacity: 1, scale: 1, rotate: -5 }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              style={{
+                position: "absolute",
+                bottom: "10px",
+                right: "5%",
+                width: "clamp(100px, 15vw, 180px)",
+                borderRadius: "16px",
+                zIndex: 10,
+                filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.4))",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowEaster(false)}
+            />
+            <motion.img
+              key="cert1"
+              src="/media/meme-cert-foundations.jpg"
+              alt="Chandler with Claude certificate"
+              initial={{ opacity: 0, x: -100, rotate: 10 }}
+              animate={{ opacity: 1, x: 0, rotate: -3 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ type: "spring", delay: 0.1 }}
+              style={{
+                position: "absolute",
+                top: "15%",
+                left: "2%",
+                width: "clamp(120px, 18vw, 220px)",
+                borderRadius: "12px",
+                zIndex: 10,
+                filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.4))",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowEaster(false)}
+            />
+            <motion.img
+              key="cert2"
+              src="/media/meme-cert-pro.jpg"
+              alt="Chandler with Claude Pro certificate"
+              initial={{ opacity: 0, x: 100, rotate: -10 }}
+              animate={{ opacity: 1, x: 0, rotate: 5 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ type: "spring", delay: 0.2 }}
+              style={{
+                position: "absolute",
+                top: "10%",
+                right: "2%",
+                width: "clamp(120px, 18vw, 220px)",
+                borderRadius: "12px",
+                zIndex: 10,
+                filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.4))",
+                cursor: "pointer",
+              }}
+              onClick={() => setShowEaster(false)}
+            />
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
