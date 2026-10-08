@@ -13,7 +13,6 @@ import type { Project } from "../data/projects";
 import { SectionCard } from "./SectionCard";
 import { BeforeAfter } from "./BeforeAfter";
 import { VideoEmbed } from "./VideoEmbed";
-import { CommentsSection } from "./CommentsSection";
 import { MediaGallery } from "./MediaGallery";
 import { ImprovementSection } from "./ImprovementSection";
 import { CrossAreaInsights } from "./CrossAreaInsights";
@@ -324,10 +323,12 @@ export function ProjectDetail({ project, areaColor }: Props) {
           </SectionCard>
 
           {/* Before / After */}
-          <BeforeAfter
-            before={project.beforeDescription}
-            after={project.afterDescription}
-          />
+          {(project.beforeDescription || project.afterDescription) && (
+            <BeforeAfter
+              before={project.beforeDescription}
+              after={project.afterDescription}
+            />
+          )}
 
           {/* Live interactive comparison */}
           {project.liveComparison && (
@@ -388,32 +389,36 @@ export function ProjectDetail({ project, areaColor }: Props) {
           </SectionCard>
 
           {/* Notes */}
-          <SectionCard
-            icon={<FileText style={{ width: "20px", height: "20px" }} />}
-            title="Notes"
-            color="#f472b6"
-            delay={0.25}
-          >
-            <p
-              style={{
-                color: "#cbd5e1",
-                lineHeight: 1.7,
-                whiteSpace: "pre-line",
-              }}
+          {project.notes && (
+            <SectionCard
+              icon={<FileText style={{ width: "20px", height: "20px" }} />}
+              title="Notes"
+              color="#f472b6"
+              delay={0.25}
             >
-              {project.notes}
-            </p>
-          </SectionCard>
+              <p
+                style={{
+                  color: "#cbd5e1",
+                  lineHeight: 1.7,
+                  whiteSpace: "pre-line",
+                }}
+              >
+                {project.notes}
+              </p>
+            </SectionCard>
+          )}
 
           {/* Video */}
-          <SectionCard
-            icon={<Play style={{ width: "20px", height: "20px" }} />}
-            title="Walkthrough video"
-            color="#6366f1"
-            delay={0.3}
-          >
-            <VideoEmbed youtubeId={project.youtubeId} title={project.title} />
-          </SectionCard>
+          {project.youtubeId && (
+            <SectionCard
+              icon={<Play style={{ width: "20px", height: "20px" }} />}
+              title="Walkthrough video"
+              color="#6366f1"
+              delay={0.3}
+            >
+              <VideoEmbed youtubeId={project.youtubeId} title={project.title} />
+            </SectionCard>
+          )}
 
           {/* Cross-area insights */}
           {project.crossAreaInsights && project.crossAreaInsights.length > 0 && (
@@ -430,8 +435,6 @@ export function ProjectDetail({ project, areaColor }: Props) {
             />
           )}
 
-          {/* Comments */}
-          <CommentsSection projectId={project.id} areaColor={areaColor} />
         </div>
       </div>
     </motion.div>
