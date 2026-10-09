@@ -305,24 +305,84 @@ export const areas: Area[] = [
         liveUrl: "https://tshirt-frontend-gilt.vercel.app/",
         media: [
           {
-            type: "image",
-            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-4d40b-ce-01---Swagger-UI-overview/test-finished-1.png",
-            caption: "Playwright: Swagger UI overview - test passed",
-          },
-          {
             type: "video",
-            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-4d40b-ce-01---Swagger-UI-overview/video.webm",
-            caption: "Playwright: Swagger UI overview - video recording",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-b70ec-Delivery-workload-dashboard/video.webm",
+            caption: "Playwright: Delivery workload dashboard",
           },
           {
             type: "image",
-            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-53372----Frontend-browse-products/test-finished-1.png",
-            caption: "Playwright: Frontend browse products - test passed",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-b70ec-Delivery-workload-dashboard/test-finished-1.png",
+            caption: "Playwright: Delivery workload dashboard - passed",
           },
           {
             type: "video",
-            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-53372----Frontend-browse-products/video.webm",
-            caption: "Playwright: Frontend browse products - video recording",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-8b232-d-product-blocked-from-cart/video.webm",
+            caption: "Playwright: Disabled product blocked from cart",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-8b232-d-product-blocked-from-cart/test-finished-1.png",
+            caption: "Playwright: Disabled product blocked from cart - passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-279a5-file-update-returns-new-JWT/video.webm",
+            caption: "Playwright: Profile update returns new JWT",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-279a5-file-update-returns-new-JWT/test-finished-1.png",
+            caption: "Playwright: Profile update returns new JWT - passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-40109-Notifications-are-paginated/video.webm",
+            caption: "Playwright: Notifications are paginated",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-40109-Notifications-are-paginated/test-finished-1.png",
+            caption: "Playwright: Notifications are paginated - passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-338c7-annot-like-disabled-product/video.webm",
+            caption: "Playwright: Cannot like disabled product",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-338c7-annot-like-disabled-product/test-finished-1.png",
+            caption: "Playwright: Cannot like disabled product - passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-ba47a-rt-rejects-quantity-over-99/video.webm",
+            caption: "Playwright: Cart rejects quantity over 99",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-ba47a-rt-rejects-quantity-over-99/test-finished-1.png",
+            caption: "Playwright: Cart rejects quantity over 99 - passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-cf78a-th-orders-cannot-be-deleted/video.webm",
+            caption: "Playwright: Address with orders cannot be deleted",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-cf78a-th-orders-cannot-be-deleted/test-finished-1.png",
+            caption: "Playwright: Address with orders cannot be deleted - passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-0bb04-tes-category-client-blocked/video.webm",
+            caption: "Playwright: Delete category client blocked",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-%E2%80%94-0bb04-tes-category-client-blocked/test-finished-1.png",
+            caption: "Playwright: Delete category client blocked - passed",
           },
         ],
         stats: [
