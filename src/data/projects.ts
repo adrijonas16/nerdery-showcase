@@ -372,7 +372,7 @@ export const areas: Area[] = [
         crossAreaInsights: [
           { fromArea: "QA", color: "#f472b6", insight: "I structured the 24 backend issues the same way I learned to write bug reports in QA week: severity, reproduction steps, expected vs actual, and evidence. A bug report without reproduction steps is just an opinion." },
           { fromArea: "Design", color: "#fb923c", insight: "The Vello audit taught me to put numbers on things. I started doing the same with API design: instead of 'the API should be fast', I set measurable thresholds (< 200ms response, < 50KB payload)." },
-          { fromArea: "PM", color: "#34d399", insight: "I used the RICE framework from PM week to prioritize the remaining 18 fixes. FIX-07 (one-line fix, high confidence) ranked above FIX-10 (high impact but high effort). Not all P0 bugs should be fixed first." },
+          { fromArea: "PM", color: "#34d399", insight: "I used the RICE framework from PM week to prioritize the 24 fixes. FIX-07 (one-line fix, high confidence) ranked above FIX-10 (high impact but high effort). Not all P0 bugs should be fixed first." },
           { fromArea: "AI", color: "#a78bfa", insight: "The 8 Claude Code skills I built (/investigate-task, /verify-change, etc.) follow the same 'rules + context + method' pattern I learned from the guardrail evolution. Each skill is a mini-CLAUDE.md." },
         ],
       },
