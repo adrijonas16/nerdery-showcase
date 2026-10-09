@@ -8,6 +8,7 @@ import {
   Zap,
   ExternalLink,
   Code,
+  GitPullRequest,
 } from "lucide-react";
 import type { Project } from "../data/projects";
 import { SectionCard } from "./SectionCard";
@@ -85,7 +86,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
           </div>
 
           {/* External links */}
-          {(project.liveUrl || project.repoUrl) && (
+          {(project.liveUrl || project.repoUrl || project.prUrl) && (
             <div
               style={{
                 display: "flex",
@@ -136,6 +137,28 @@ export function ProjectDetail({ project, areaColor }: Props) {
                 >
                   <Code style={{ width: "16px", height: "16px" }} />
                   View code
+                </a>
+              )}
+              {project.prUrl && (
+                <a
+                  href={project.prUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 20px",
+                    borderRadius: "10px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#cbd5e1",
+                    backgroundColor: "#334155",
+                    textDecoration: "none",
+                  }}
+                >
+                  <GitPullRequest style={{ width: "16px", height: "16px" }} />
+                  View PR
                 </a>
               )}
               {project.repoUrl && (

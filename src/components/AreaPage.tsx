@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, ExternalLink, Code } from "lucide-react";
+import { ArrowLeft, ExternalLink, Code, GitPullRequest } from "lucide-react";
 import type { Area, Project } from "../data/projects";
 import { ProjectDetail } from "./ProjectDetail";
 
@@ -252,6 +252,26 @@ export function AreaPage({
                         >
                           <Code style={{ width: "14px", height: "14px" }} />
                           Code
+                        </a>
+                      )}
+                      {project.prUrl && (
+                        <a
+                          href={project.prUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            fontSize: "12px",
+                            fontWeight: 500,
+                            color: "#94a3b8",
+                            textDecoration: "none",
+                          }}
+                        >
+                          <GitPullRequest style={{ width: "14px", height: "14px" }} />
+                          PR
                         </a>
                       )}
                     </div>

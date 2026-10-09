@@ -40,6 +40,7 @@ export interface Project {
   stats?: { label: string; value: string }[];
   liveUrl?: string;
   repoUrl?: string;
+  prUrl?: string;
   media?: MediaItem[];
   comparisons?: ComparisonPair[];
   liveComparison?: {
@@ -110,6 +111,7 @@ export const areas: Area[] = [
         techStack: ["React", "TypeScript", "Vite", "GraphQL", "Figma"],
         liveUrl: "https://ravn-task-management.vercel.app",
         repoUrl: "https://github.com/adrianachipana-lab/ravn-task-management",
+        prUrl: "https://github.com/adrianachipana-lab/ravn-task-management/pull/2",
         media: [
           { type: "image", src: "/media/frontend/task-dashboard.png", caption: "Dashboard board view - 5 Kanban columns with task cards" },
           { type: "image", src: "/media/frontend/task-dashboard-mobile.png", caption: "Dashboard mobile - responsive layout with bottom navigation" },
@@ -299,6 +301,7 @@ export const areas: Area[] = [
           "Redis",
         ],
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
+        prUrl: "https://github.com/adrijonas16/Ravn--BackEnd/pull/3",
         liveUrl: "https://tshirt-frontend-gilt.vercel.app/",
         stats: [
           { label: "Endpoints", value: "27+" },
@@ -539,6 +542,7 @@ export const areas: Area[] = [
           "Claude AI",
         ],
         repoUrl: "https://github.com/adrianachipana-lab/vello-provider-card-deliverable",
+        prUrl: "https://github.com/adrianachipana-lab/vello-provider-card-deliverable/pull/1",
         media: [
           { type: "image", src: "/media/design/neighbor-app-full.png", caption: "NeighborCard app - full view with state switcher and audit panel" },
           { type: "image", src: "/media/design/neighbor-card-closeup.png", caption: "NeighborCard closeup - photo, verified mark, Available badge, footprints, 5-star rating" },
@@ -742,6 +746,7 @@ export const areas: Area[] = [
           "Jest",
         ],
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
+        prUrl: "https://github.com/adrijonas16/Ravn--BackEnd/pull/1",
         stats: [
           { label: "Skills Built", value: "8" },
           { label: "Commits", value: "13" },
