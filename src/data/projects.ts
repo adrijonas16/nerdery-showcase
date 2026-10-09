@@ -303,6 +303,28 @@ export const areas: Area[] = [
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
         prUrl: "https://github.com/adrijonas16/Ravn--BackEnd/pull/3",
         liveUrl: "https://tshirt-frontend-gilt.vercel.app/",
+        media: [
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-4d40b-ce-01---Swagger-UI-overview/test-finished-1.png",
+            caption: "Playwright: Swagger UI overview - test passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-4d40b-ce-01---Swagger-UI-overview/video.webm",
+            caption: "Playwright: Swagger UI overview - video recording",
+          },
+          {
+            type: "image",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-53372----Frontend-browse-products/test-finished-1.png",
+            caption: "Playwright: Frontend browse products - test passed",
+          },
+          {
+            type: "video",
+            src: "https://raw.githubusercontent.com/adrijonas16/Ravn--BackEnd/fix/api-audit-clean/BackEnd/tshirt-store-api/tshirt-api/test-results/demo-recording-API-Audit-D-53372----Frontend-browse-products/video.webm",
+            caption: "Playwright: Frontend browse products - video recording",
+          },
+        ],
         stats: [
           { label: "Endpoints", value: "27+" },
           { label: "Fixes Applied", value: "24/24" },
