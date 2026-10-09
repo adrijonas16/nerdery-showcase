@@ -281,15 +281,16 @@ export const areas: Area[] = [
           "FIX-22: Cart quantity capped at 99 units per item",
           "FIX-23: Low-stock alerts fire for any stock below threshold with 24h dedup",
           "FIX-24: toMoney() utility for consistent 2-decimal rounding across services",
+          "FIX-25: Cron job auto-cancels abandoned orders (pending > 2h) every 15 min — restores reserved stock, creates cancellation inventory movements, frees promo code redemptions",
           "Cart stock exposure - formatCart() now includes SKU stock so the frontend can cap quantities",
         ],
         beforeDescription:
-          "Full audit: 24 issues found, all 24 fixed.\n\nP0 Critical (6+1): race condition in orders, delivery system missing, duplicate payments, demo stock validation, promo code on cancellation, cart items not cleaned, direct purchase stock gap\nP1 High (7): disabled products in cart, per-user promo limit, cart items orphaned, stock overselling, variants after soft-delete, webhook race condition, slug collisions\nP2 Medium (7): JWT stale after update, cart stock warning, notifications pagination, likes on disabled products, order response inconsistency, categories read-only, direct purchase no transaction\nP3 Low (4): address deletion safety, cart quantity limit, low-stock detection, decimal precision\n\nHow I found them: traced every data flow end to end (cart to order, order to payment, payment to webhook, cancellation). For each flow I checked transaction boundaries, race conditions, data consistency across services, and what happens when things fail.\n\nFinal review caught 3 gaps that my own fixes introduced (FIX-18) - proof that reviewing your own changes is essential.",
+          "Full audit: 25 issues found, all 25 fixed.\n\nP0 Critical (6+1): race condition in orders, delivery system missing, duplicate payments, demo stock validation, promo code on cancellation, cart items not cleaned, direct purchase stock gap\nP1 High (7): disabled products in cart, per-user promo limit, cart items orphaned, stock overselling, variants after soft-delete, webhook race condition, slug collisions\nP2 Medium (7): JWT stale after update, cart stock warning, notifications pagination, likes on disabled products, order response inconsistency, categories read-only, direct purchase no transaction\nP3 Low (4+1): address deletion safety, cart quantity limit, low-stock detection, decimal precision, abandoned order cleanup cron\n\nHow I found them: traced every data flow end to end (cart to order, order to payment, payment to webhook, cancellation). For each flow I checked transaction boundaries, race conditions, data consistency across services, and what happens when things fail.\n\nFinal review caught 3 gaps that my own fixes introduced (FIX-18) - proof that reviewing your own changes is essential.",
         afterDescription:
-          "All 24 issues fixed. 100 tests passing, build clean, lint clean.\n\nCritical fixes:\n- Orders safe from race conditions - entire checkout inside Prisma $transaction\n- Stock reserved at order creation, consistent across ALL paths (cart, direct purchase, cancellation, payment failure)\n- Delivery system functional - managers see workload and assign with capacity limits\n- Payments idempotent - no duplicate charges, no 500 on duplicate webhooks\n- Promo codes have per-user limits, restored on cancellation and payment failure\n\nHigh fixes:\n- Disabled products blocked from cart, variants deactivated on soft-delete\n- Webhook idempotency atomic, slug collisions handled with random suffix + retry\n\nMedium fixes:\n- JWT refreshed after profile update, cart warns about insufficient stock\n- Notifications paginated, likes blocked on disabled products\n- Order responses consistent between list and detail, categories have full CRUD\n\nLow fixes:\n- Address deletion blocked with active orders, cart quantity capped at 99\n- Low-stock alerts fire below threshold with 24h dedup, decimal precision centralized",
+          "All 25 issues fixed. 100 tests passing, build clean, lint clean.\n\nCritical fixes:\n- Orders safe from race conditions - entire checkout inside Prisma $transaction\n- Stock reserved at order creation, consistent across ALL paths (cart, direct purchase, cancellation, payment failure)\n- Delivery system functional - managers see workload and assign with capacity limits\n- Payments idempotent - no duplicate charges, no 500 on duplicate webhooks\n- Promo codes have per-user limits, restored on cancellation and payment failure\n\nHigh fixes:\n- Disabled products blocked from cart, variants deactivated on soft-delete\n- Webhook idempotency atomic, slug collisions handled with random suffix + retry\n\nMedium fixes:\n- JWT refreshed after profile update, cart warns about insufficient stock\n- Notifications paginated, likes blocked on disabled products\n- Order responses consistent between list and detail, categories have full CRUD\n\nLow fixes:\n- Address deletion blocked with active orders, cart quantity capped at 99\n- Low-stock alerts fire below threshold with 24h dedup, decimal precision centralized\n- Cron job auto-cancels abandoned orders after 2h, restoring stock and freeing promo codes",
         notes:
-          "Branch: fix/api-audit-p0-p1 (6 commits, 100 tests passing)\nPR: https://github.com/adrijonas16/Ravn--BackEnd/pull/3\n\nWhat went well:\n- Full end-to-end audit tracing every data flow (cart -> order -> payment -> webhook -> cancellation)\n- Found 24 real issues including race conditions, stock overselling, and idempotency gaps\n- Fixed all 24 with updated tests, 100 passing\n- Found 3 bugs our own fixes introduced (FIX-18) - proves self-review works\n- Built a frontend to demonstrate the flows visually\n\nMentor advice:\n- Use descriptive variable names: 'loginData' not 'data', 'userProfile' not 'result'\n- Name variables after what they return: 'orderResponse', 'paymentIntent', 'deliveryWorkload'\n- The audit approach (test the frontend, notice what doesn't work, trace back to the backend) is how real bugs are found",
-        youtubeId: "",
+          "Branch: fix/api-audit-p0-p1 (5 commits, 100 tests passing)\nPR: https://github.com/adrijonas16/Ravn--BackEnd/pull/3\n\nWhat went well:\n- Full end-to-end audit tracing every data flow (cart -> order -> payment -> webhook -> cancellation)\n- Found 25 real issues including race conditions, stock overselling, and idempotency gaps\n- Fixed all 25 with updated tests, 100 passing\n- Found 3 bugs our own fixes introduced (FIX-18) - proves self-review works\n- Built a frontend to demonstrate the flows visually\n- Added cron job to auto-cancel abandoned orders, completing the stock reservation lifecycle\n\nMentor advice:\n- Use descriptive variable names: 'loginData' not 'data', 'userProfile' not 'result'\n- Name variables after what they return: 'orderResponse', 'paymentIntent', 'deliveryWorkload'\n- The audit approach (test the frontend, notice what doesn't work, trace back to the backend) is how real bugs are found",
+        youtubeId: "_1guhp4rFR4",
         techStack: [
           "NestJS",
           "Prisma",
@@ -299,6 +300,7 @@ export const areas: Area[] = [
           "Swagger",
           "BullMQ",
           "Redis",
+          "@nestjs/schedule",
         ],
         repoUrl: "https://github.com/adrijonas16/Ravn--BackEnd",
         prUrl: "https://github.com/adrijonas16/Ravn--BackEnd/pull/3",
@@ -387,7 +389,7 @@ export const areas: Area[] = [
         ],
         stats: [
           { label: "Endpoints", value: "27+" },
-          { label: "Fixes Applied", value: "24/24" },
+          { label: "Fixes Applied", value: "25/25" },
           { label: "Tests Passing", value: "100" },
         ],
         whatILearned: "I learned to do a full audit of a production backend: identify race conditions, validate Prisma transactions, understand Stripe payment flows, and document issues with severity and fix plans. The most important lesson: the most dangerous bugs are concurrency bugs - two requests at the same time can create corrupt data if they're not inside a transaction.",
@@ -442,6 +444,15 @@ export const areas: Area[] = [
             skills: ["Consistency review", "Stock flow integrity"],
           },
           {
+            title: "FIX-25: Cron job auto-cancels abandoned orders",
+            description: "Orders stuck in 'pending' for over 2 hours are automatically cancelled every 15 minutes. The cron restores reserved stock, creates inventory movements (type: cancellation), and frees promo code redemptions. Completes the stock reservation lifecycle from FIX-10.",
+            code: {
+              after: "@Cron('*/15 * * * *')\nasync cancelAbandonedOrders() {\n  const cutoff = new Date(Date.now() - ABANDONED_ORDER_HOURS * 3600000);\n  const abandoned = await this.prisma.order.findMany({\n    where: { status: 'pending', createdAt: { lt: cutoff } },\n    include: { items: true },\n  });\n  for (const order of abandoned) {\n    await this.prisma.$transaction(async (tx) => {\n      // Restore stock, create cancellation movements, free promo\n      await tx.order.update({ where: { id: order.id }, data: { status: 'cancelled' } });\n    });\n  }\n}",
+              file: "src/orders/orders-cleanup.service.ts",
+            },
+            skills: ["@nestjs/schedule", "Cron jobs", "Stock lifecycle"],
+          },
+          {
             title: "Use descriptive variable names in services",
             description: "Mentor feedback: variables should explain what they hold. Instead of 'data' use 'orderData', 'paymentResult'. The name should tell you what's inside without reading the assignment.",
             prompt: "Audit variable names in all backend services. Find generic names like 'data', 'result', 'item' and suggest descriptive replacements. List as: file:line | current | suggested.",
@@ -455,9 +466,9 @@ export const areas: Area[] = [
           },
         ],
         crossAreaInsights: [
-          { fromArea: "QA", color: "#f472b6", insight: "I structured the 24 backend issues the same way I learned to write bug reports in QA week: severity, reproduction steps, expected vs actual, and evidence. A bug report without reproduction steps is just an opinion." },
+          { fromArea: "QA", color: "#f472b6", insight: "I structured the 25 backend issues the same way I learned to write bug reports in QA week: severity, reproduction steps, expected vs actual, and evidence. A bug report without reproduction steps is just an opinion." },
           { fromArea: "Design", color: "#fb923c", insight: "The Vello audit taught me to put numbers on things. I started doing the same with API design: instead of 'the API should be fast', I set measurable thresholds (< 200ms response, < 50KB payload)." },
-          { fromArea: "PM", color: "#34d399", insight: "I used the RICE framework from PM week to prioritize the 24 fixes. FIX-07 (one-line fix, high confidence) ranked above FIX-10 (high impact but high effort). Not all P0 bugs should be fixed first." },
+          { fromArea: "PM", color: "#34d399", insight: "I used the RICE framework from PM week to prioritize the 25 fixes. FIX-07 (one-line fix, high confidence) ranked above FIX-10 (high impact but high effort). Not all P0 bugs should be fixed first." },
           { fromArea: "AI", color: "#a78bfa", insight: "The 8 Claude Code skills I built (/investigate-task, /verify-change, etc.) follow the same 'rules + context + method' pattern I learned from the guardrail evolution. Each skill is a mini-CLAUDE.md." },
         ],
       },
@@ -614,7 +625,7 @@ export const areas: Area[] = [
           "What we improved after feedback (PR #1):\n\n- Measured all 11 color combinations with WCAG 2.1 formulas in a contrast audit (day4-thursday/contrast-audit.md). Found 1 failing pair.\n- Available badge fix: text color was --brand-primary (green-600) at 4.12:1, failing AA for 12px text. Changed to --text-brand (green-700) at 5.70:1. Applied to both card and profile view.\n- Fixed stale 'coral' references in Day 2 and Day 3 docs that still referenced the first buggy badge color.\n- Added feedback response doc mapping each mentor feedback point to the specific change made.\n- Timeline of the badge bug is now explicit: missing -> coral -> green -> contrast-fixed green.",
         notes:
           "Repo: github.com/adrianachipana-lab/vello-provider-card-deliverable\nPR #1: github.com/adrianachipana-lab/vello-provider-card-deliverable/pull/1\nBranches: main (first delivery), improve/neighbor-card-feedback (fixes)\n\nWhat went well (mentor feedback):\n- Tied every element to the product: connected the initials failure to Vello's bet that you hire a neighbor, not a stranger\n- Caught what Claude got wrong piece by piece: initials instead of photos, generic check mark, no availability badge, wrong distance format\n- Guardrail grew from real failures: 4 iterations, each triggered by a named problem\n- Designed the absence: built the unavailable state on the idea that the absence is the information\n- Showed how thinking changed: before the week a card needed a name and basic info, now every element answers a question\n- Went the extra mile: design QA of the whole app, report in two languages, recorded demo, left designer questions with reasons\n\nWhere to grow (mentor feedback):\n- Early week deliverables were thin - two of seven complete end to end\n- Add measurements: audit had no contrast numbers. Measuring makes good reasoning easier to trust -> Fixed in PR #1\n\nThe 5-day arc: Foundations (Mon) -> Discovery (Tue) -> Architecture (Wed) -> Craft & Critique (Thu) -> Faithful Code (Fri).",
-        youtubeId: "",
+        youtubeId: "SIY830InYjk",
         techStack: [
           "React",
           "Vite",
@@ -771,7 +782,7 @@ export const areas: Area[] = [
           },
         ],
         crossAreaInsights: [
-          { fromArea: "Backend", color: "#22d3ee", insight: "Finding 24 real issues in the backend audit taught me to think about unhappy paths in the PRD too. 'What happens if two users do X at the same time' is exactly the kind of scenario acceptance criteria should cover." },
+          { fromArea: "Backend", color: "#22d3ee", insight: "Finding 25 real issues in the backend audit taught me to think about unhappy paths in the PRD too. 'What happens if two users do X at the same time' is exactly the kind of scenario acceptance criteria should cover." },
           { fromArea: "QA", color: "#f472b6", insight: "QA week taught me that if QA can't test my acceptance criteria, they're not testable. I rewrote the ReNest AC so a QA engineer could turn each one into Given/When/Then without guessing." },
           { fromArea: "Design", color: "#fb923c", insight: "The design module's Definition of Done (measure, don't assume) changed how I write PRD requirements. Instead of 'fast' I write '< 200ms on 4G'. If you can't measure it, it's not a requirement." },
           { fromArea: "AI", color: "#a78bfa", insight: "I used Claude to stress-test my RICE scores by asking it to argue against my confidence percentages. The AI module taught me to use Claude as a challenger, not a yes-machine." },
