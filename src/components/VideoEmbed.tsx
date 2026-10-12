@@ -48,7 +48,7 @@ export function VideoEmbed({ youtubeId, title }: Props) {
           height: "100%",
           border: "none",
         }}
-        src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(youtubeId)}`}
+        src={`https://www.youtube.com/embed/${encodeURIComponent(youtubeId)}`}
         title={title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
