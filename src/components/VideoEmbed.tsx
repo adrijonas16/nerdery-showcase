@@ -48,9 +48,10 @@ export function VideoEmbed({ youtubeId, title }: Props) {
           height: "100%",
           border: "none",
         }}
-        src={`https://www.youtube.com/embed/${encodeURIComponent(youtubeId)}`}
+        src={`https://www.youtube.com/embed/${youtubeId}?origin=${typeof window !== 'undefined' ? window.location.origin : ''}&rel=0`}
         title={title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen
       />
     </div>
