@@ -105,8 +105,8 @@ export const areas: Area[] = [
         beforeDescription:
           "What we built:\n\n- Kanban board with 5 columns, full CRUD via GraphQL, drag-and-drop, responsive mobile layout\n- 9/9 checkpoints passing (45/45 tests), deployed on Vercel\n- Custom hooks for task operations, Error Boundary, toast notifications\n- Advanced filter panel, list view, profile popover\n\nCode review found 7 issues (all one theme: concurrency and time):\n\n- dueDate filter off by one day (UTC parse + local render)\n- Drag fires N mutations and overlapping drags fight over one slot\n- Silent validation, submit button never disables during flight\n- Refetch-everything after every mutation\n- Modal uses <dialog open> instead of showModal() (not truly modal)\n- Search fires a query per keystroke (undebounced)\n- Dashboard.tsx and MyTasks.tsx have duplicated handler code",
         afterDescription:
-          "All 7 code review issues fixed:\n\n1. dueDate: replaced Date().toDateString() comparison with direct string comparison using formatDateInputValue() (local parts, no UTC shift)\n2. Drag race condition: added a drag queue (dragQueueRef) so overlapping drags execute sequentially\n3. Silent validation: added nameError state with inline error (role='alert', aria-invalid) + isSubmitting to disable button during flight\n4. Refetch: create uses refetchQueries (targeted), delete uses cache.modify() (no network request)\n5. Modal: uses dialog.showModal() for native focus trap + backdrop + keyboard. Added aria-modal, role='dialog', dynamic ariaLabel\n6. Search: added 300ms debounce with local searchInput state for instant UI while delaying the query\n7. Duplicated code: extracted useTaskActions() hook with shared handlers. Both pages import from it, ~60 lines removed",
-        notes: "PR #2 (code review fixes): github.com/adrianachipana-lab/ravn-task-management/pull/2\nBranch: fix/code-review-week4\n\nCode review highlights (what was done well):\n- TaskForm with optional initialData is exactly the right shape - one form, zero create/edit duplication\n- Discriminated result type ({ success: true } | { success: false; error: string }) forces every caller to handle failure\n- Toasts have aria-live='polite'\n- Only drag-and-drop in the cohort that reindexes siblings with honest per-move toasts\n- No index keys, no state mutation, no conditional hooks\n- 62/62 tests pass, typecheck and lint clean\n- README documents every deviation with a reason\n\nCode review theme: concurrency and time - parallel mutations, in-flight double-submits, undebounced queries, timezone parsing. That is the next layer of frontend skill after correctness.\n\nMentor advice: use GraphQL Codegen (Ricardo), keep variable names descriptive, use libraries that simplify code.",
+          "All 7 code review issues fixed + 7 follow-up improvements (verified with build + 81 tests + lint):\n\n1. dueDate: replaced Date().toDateString() comparison with direct string comparison using formatDateInputValue() (local parts, no UTC shift)\n2. Drag race condition: added a drag queue (dragQueueRef) so overlapping drags execute sequentially\n3. Silent validation: added nameError state with inline error (role='alert', aria-invalid) + isSubmitting to disable button during flight\n4. Refetch: create uses refetchQueries (targeted), delete uses cache.modify() (no network request)\n5. Modal: uses dialog.showModal() for native focus trap + backdrop + keyboard. Added aria-modal, role='dialog', dynamic ariaLabel\n6. Search: added 300ms debounce with local searchInput state for instant UI while delaying the query\n7. Duplicated code: extracted useTaskActions() hook with shared handlers. Both pages import from it, ~60 lines removed\n\nFollow-up fixes (verified):\n8. Form stuck after failure: wrapped onSubmit in try/finally so isSubmitting always resets\n9. Drag queue resilience: Promise.allSettled + refetch wrapped in try/catch so queue never rejects. Subsequent operations always execute.\n10. Delete + move full coordination: delete goes through dragQueueRef (not just await). isDeletingRef blocks new moves during delete. updateTask waits for queue before editing.\n11. Optimistic UI recovery: pendingMoveCountRef tracks concurrent moves. Only clears optimistic state when all complete. Delete failure falls back to server state. Multiple drags no longer share a single pendingMoveUpdates.\n12. Debounce stale filter fix: filtersRef prevents 300ms timer from overwriting concurrent filter changes. searchInput syncs when filters are cleared. Pending timer cancelled on clear.\n13. DnD library migration: replaced native draggable/dataTransfer/events with @dnd-kit/core + @dnd-kit/sortable. Keyboard (KeyboardSensor) and touch (TouchSensor) support added. Position calculation extracted to testable utility.\n14. Test coverage: 81 tests (up from 63). New tests: drag position calculations, queue serialization, refetch failure recovery, delete-during-move coordination, optimistic state lifecycle.",
+        notes: "PR #2 (code review fixes): github.com/adrianachipana-lab/ravn-task-management/pull/2\nBranch: fix/code-review-issues\n\nVerification: npm run build (clean), npm run test:run (81/81), npm run lint (0 warnings)\n\nCode review highlights (what was done well):\n- TaskForm with optional initialData is exactly the right shape - one form, zero create/edit duplication\n- Discriminated result type ({ success: true } | { success: false; error: string }) forces every caller to handle failure\n- Toasts have aria-live='polite'\n- Only drag-and-drop in the cohort that reindexes siblings with honest per-move toasts\n- No index keys, no state mutation, no conditional hooks\n- README documents every deviation with a reason\n\nCode review theme: concurrency and time - parallel mutations, in-flight double-submits, undebounced queries, timezone parsing. That is the next layer of frontend skill after correctness.\n\nMentor advice: use GraphQL Codegen (Ricardo), keep variable names descriptive, use libraries that simplify code.\n\nPending recommendations (not yet implemented):\n- GraphQL Codegen for type-safe queries\n- Browser E2E tests (Playwright) for the full drag-and-drop flow",
         youtubeId: "",
         techStack: ["React", "TypeScript", "Vite", "GraphQL", "Figma"],
         liveUrl: "https://ravn-task-management.vercel.app",
@@ -125,10 +125,10 @@ export const areas: Area[] = [
         stats: [
           { label: "Checkpoints", value: "9/9" },
           { label: "Weeks", value: "4" },
-          { label: "Tests", value: "45/45" },
+          { label: "Tests", value: "81/81" },
         ],
         whatILearned: "I learned to build a full app from a Figma design in 4 weeks, progressing from React fundamentals to a complete Kanban board with GraphQL. The biggest lessons: TypeScript strict typing catches bugs before they happen, custom hooks keep logic reusable, and the quality standard matters more than completing every feature - quality over quantity was the challenge's core principle.",
-        toolsUsed: ["React", "TypeScript", "Vite", "GraphQL", "Vitest", "Figma", "Claude Code", "Vercel", "Drag & Drop"],
+        toolsUsed: ["React", "TypeScript", "Vite", "GraphQL", "Vitest", "Figma", "Claude Code", "Vercel", "@dnd-kit"],
         proposedImprovements: [
           {
             title: "Fix 1: dueDate off by one day",
@@ -180,7 +180,74 @@ export const areas: Area[] = [
             skills: ["Custom hooks", "DRY", "Code extraction"],
           },
           {
-            title: "GraphQL Codegen for type-safe queries (next step)",
+            title: "Fix 8: Form stuck after failure (follow-up)",
+            description: "isSubmitting was set to true but never reset when onSubmit failed. The button stayed disabled forever and the user couldn't retry. Wrapped onSubmit in try/finally so isSubmitting always resets. Form data is preserved on failure so the user can fix and retry.",
+            code: {
+              before: "setIsSubmitting(true);\nonSubmit({ name, status, ... });",
+              after: "setIsSubmitting(true);\ntry {\n  await onSubmit({ name, status, ... });\n} finally {\n  setIsSubmitting(false);\n}",
+              file: "src/components/TaskForm/TaskForm.tsx:82-91",
+            },
+            skills: ["Error recovery", "try/finally"],
+          },
+          {
+            title: "Fix 9: Drag queue partial failure handling (follow-up)",
+            description: "Promise.all rejects on the first failure, but other mutations from the same drag keep running. The old catch returned a result but didn't reconcile the partial server state. Replaced with Promise.allSettled so all updates complete, then always refetch to reconcile.",
+            code: {
+              before: "await Promise.all(inputs.map(runUpdateTaskMutation));\nawait refetch();",
+              after: "const settled = await Promise.allSettled(\n  inputs.map(runUpdateTaskMutation)\n);\n// Always refetch to reconcile with server\nawait refetch();\nif (failures.length > 0) {\n  return { success: false,\n    error: `${failures.length} of ${inputs.length} failed` };\n}",
+              file: "src/hooks/useTasks.ts:104-118",
+            },
+            skills: ["Promise.allSettled", "Server reconciliation"],
+          },
+          {
+            title: "Fix 10: Delete + move full coordination",
+            description: "Original fix only awaited the queue then called deleteTask outside it. New version: delete goes through dragQueueRef so subsequent drags wait. isDeletingRef blocks new moves while deleting. updateTask also waits for the queue before editing.",
+            code: {
+              after: "// Delete enters the queue and blocks new moves\nconst safeDeleteTask = (taskId) => {\n  isDeletingRef.current = true;\n  const op = dragQueueRef.current.then(async () => {\n    try { return await deleteTask(taskId); }\n    finally { isDeletingRef.current = false; }\n  });\n  dragQueueRef.current = op;\n  return op;\n};\n\n// updateTasks checks the flag\nif (isDeletingRef.current)\n  return { success: false, error: 'delete in progress' };",
+              file: "src/hooks/useTasks.ts:130-150",
+            },
+            skills: ["Queue coordination", "Ref-based flags"],
+          },
+          {
+            title: "Fix 11: Optimistic UI recovery",
+            description: "Multiple drags shared a single pendingMoveUpdates array. One failure cleared state for all pending moves. Replaced with pendingMoveCountRef: each move increments on start, decrements in finally. Optimistic state only clears when count reaches 0. Delete failure falls back to server state.",
+            code: {
+              before: "const [pendingMoveUpdates, setPendingMoveUpdates] = useState([]);\n// One failure clears all:\nsetOptimisticTasks(null);\nsetPendingMoveUpdates([]);",
+              after: "const pendingMoveCountRef = useRef(0);\n\n// In handleMoveTasks:\npendingMoveCountRef.current++;\ntry { ... } finally {\n  pendingMoveCountRef.current--;\n  if (pendingMoveCountRef.current === 0)\n    setOptimisticTasks(null);\n}",
+              file: "src/pages/Dashboard/Dashboard.tsx:50-75",
+            },
+            skills: ["Optimistic UI", "Concurrent state"],
+          },
+          {
+            title: "Fix 12: Debounce stale filter fix",
+            description: "The 300ms timer captured filters at closure time. Changing another filter before the timer fired overwrote it. Fixed with filtersRef. Also syncs searchInput when clearFilters is called and cancels pending timers.",
+            code: {
+              before: "const handleSearchChange = useCallback((value) => {\n  setFilters({ ...filters, name: value || undefined });\n}, [filters, setFilters]);",
+              after: "const filtersRef = useRef(filters);\nfiltersRef.current = filters;\n\nconst handleSearchChange = useCallback((value) => {\n  debounceRef.current = setTimeout(() => {\n    setFilters({ ...filtersRef.current, name: value || undefined });\n  }, 300);\n}, [setFilters]);\n\n// Sync on clear\nuseEffect(() => {\n  if (filters.name === undefined && searchInput !== '') {\n    setSearchInput('');\n    clearTimeout(debounceRef.current);\n  }\n}, [filters.name, searchInput]);",
+              file: "src/App.tsx:31-48",
+            },
+            skills: ["Debounce", "Stale closures", "useRef"],
+          },
+          {
+            title: "Fix 13: DnD library migration (@dnd-kit)",
+            description: "Replaced native draggable/dataTransfer/events with @dnd-kit/core + @dnd-kit/sortable. DndContext at Dashboard level, SortableContext per column, DragOverlay for the preview. Added PointerSensor, TouchSensor, and KeyboardSensor with sortableKeyboardCoordinates. Position calculation extracted to a pure testable function.",
+            code: {
+              after: "// Dashboard.tsx\n<DndContext sensors={sensors}\n  collisionDetection={closestCorners}\n  onDragEnd={handleDragEnd}>\n  <TaskColumn ... />\n  <DragOverlay>\n    {activeTask && <TaskCard task={activeTask} />}\n  </DragOverlay>\n</DndContext>\n\n// TaskColumn.tsx\n<SortableContext items={taskIds}\n  strategy={verticalListSortingStrategy}>\n  {tasks.map(t => <SortableTaskCard ... />)}\n</SortableContext>",
+              file: "src/pages/Dashboard/Dashboard.tsx + src/components/TaskColumn/TaskColumn.tsx",
+            },
+            skills: ["@dnd-kit", "Keyboard a11y", "Touch support"],
+          },
+          {
+            title: "Fix 14: Test coverage (63 -> 81 tests)",
+            description: "Added 18 new tests covering: drag position calculations (8 cases), queue serialization and error recovery (6 cases), optimistic state lifecycle (2 cases), TaskColumn rendering (4 cases). Queue tests simulate the ref-based promise chain to verify moves serialize, refetch failures don't break the chain, and deletes block concurrent moves.",
+            code: {
+              after: "// useTaskQueue.test.ts - queue simulation\nit('continues after refetch fails', async () => {\n  const r1 = q.enqueueMove(\n    async () => {},\n    async () => { throw new Error('refetch failed'); },\n  );\n  const r2 = q.enqueueMove(async () => {}, async () => {});\n  expect((await r1).success).toBe(true);  // mutation ok\n  expect((await r2).success).toBe(true);  // chain intact\n});",
+              file: "src/hooks/useTaskQueue.test.ts + src/utils/dragPositions.test.ts",
+            },
+            skills: ["Vitest", "Queue testing", "Pure function testing"],
+          },
+          {
+            title: "GraphQL Codegen for type-safe queries (pending recommendation)",
             description: "Mentor recommendation: auto-generate types from the schema instead of maintaining them manually. Eliminates type drift between API and frontend.",
             prompt: "Install @graphql-codegen/cli and generate typed hooks for all queries and mutations. Replace manual types in src/types/.",
             skills: ["GraphQL Codegen", "TypeScript"],
@@ -891,6 +958,198 @@ export const areas: Area[] = [
           { fromArea: "Backend", color: "#22d3ee", insight: "The 8 skills were born from the backend audit. Each recurring task (investigate a bug, verify a fix, check security) became a skill so the same method runs every time without forgetting steps." },
           { fromArea: "QA", color: "#f472b6", insight: "The QA principle 'a failing test documents a gap' applies to skills too: when /verify-change fails, the failure output tells you exactly what broke and where, same as a Playwright test failure." },
           { fromArea: "Design", color: "#fb923c", insight: "The CLAUDE.md guardrail from the design module follows the same pattern as a skill: rules (allowed-tools), context (reference.md), and method (step-by-step instructions). The design week taught me the pattern, the AI module applied it 8 times." },
+        ],
+      },
+    ],
+  },
+  {
+    id: "business",
+    title: "Business",
+    color: "#f59e0b",
+    icon: "Rocket",
+    tagline: "Lean startup analysis on a real product",
+    projects: [
+      {
+        id: "urbex-lean-startup",
+        title: "Urbex -- Explore the Unexplored",
+        tagline: "Is this exploration platform worth building into a business?",
+        description:
+          "Urbex is a platform for discovering places most people don't know about -- abandoned buildings, hidden natural spots, off-the-beaten-path destinations across 196 countries. It's live at urbexcompany.com with 5,500+ real places, gamification, trip planning, and a company portal. The question isn't whether it works as a product -- it does. The question is whether it works as a business. This is the lean startup analysis to find out.",
+        requirements: [
+          "Identify a specific customer and problem -- who are they, what's broken, how do they deal with it today?",
+          "Map the competitive landscape -- who else is trying to solve this, and why would someone pick Urbex?",
+          "Size the market -- TAM, SAM, SOM with real numbers, not made up ones",
+          "Run an experiment to test the biggest assumption -- what did I learn, and what am I still guessing?",
+          "Define the smallest useful version (MVP) -- what's the minimum that delivers value?",
+          "Design the business model -- pricing, unit economics, and financial projections",
+          "Plan the go-to-market -- marketing channels, customer acquisition, first paying customers",
+          "Identify risks and pivot triggers -- what would make me change direction?",
+        ],
+        improvements: [
+          "Live at urbexcompany.com + mobile app (React Native/Expo) -- not a concept, a full product with real data",
+          "5,532 real places across 196 countries with 2,887 photos, 43 categories, 364 UNESCO World Heritage Sites",
+          "Place discovery with infinite scroll, country/category/city filters, search, trending page, nearby (GPS radius)",
+          "Every place has: photos, interactive map, chatbot assistant, comments, likes, weather, entry price, how-to-get, recommendations",
+          "Place chatbot on every detail page -- answers questions about the place (price, transport, guides, coordinates) using regex intent detection, zero API cost",
+          "Users can submit new places (photo + pin on map + details) -- goes to admin moderation queue before publishing",
+          "Visited tracking with personal SVG world map (custom TopoJSON renderer, no D3), stats: places visited, countries, % of world explored",
+          "Gamification: 10 levels, 10 achievements, XP for visits/likes/comments/submissions, community leaderboard",
+          "Trip planner: collaborative itineraries with flights, hotels, restaurants, transport, activities, notes -- organized by day with drag-reorder",
+          "Planner features: budget tracker with multi-currency conversion (USD/EUR/PEN/MXN/COP/ARS/CLP/BRL), calendar week view, route optimizer (nearest-neighbor TSP algorithm), invite collaborators, public/private visibility",
+          "Share image generator: produces a 1080px vintage travel diary PNG entirely client-side with Canvas -- parchment texture, compass rose, map with route lines, polaroid photos, country flags, QR code, all dynamically generated",
+          "Group trips: create expeditions with meeting point map, difficulty level, max participants, what-to-bring list. Auto-creates a chat room for the group",
+          "Live group tracking (mobile): real-time GPS sharing among trip members via Socket.IO -- everyone sees each other on the map with colored trails",
+          "GPS route recording (mobile): record trekking/cycling/kayak routes with live stats (distance, pace, speed), add photos during recording, upload as community routes others can follow",
+          "Chat rooms: real-time WebSocket chat, location-based rooms, auto-created rooms for group trips. Connection status indicator, emoji room icons",
+          "Interactive 3D globe (Three.js/WebGL): spin, click countries to explore, hover tooltips with flag + name, auto-rotation, zoom-to-country animation",
+          "Company portal: tour operators register, publish services with schedules (one-time/weekly/monthly recurrence), manage bookings, dashboard with revenue stats",
+          "Tour request marketplace: travelers post requests (destination, dates, budget), companies submit competing offers, traveler accepts the best one",
+          "Community photos: users contribute photos to any place (upload or URL), goes through moderation. All photos protected with anti-right-click overlay",
+          "External media: users submit TikTok/YouTube videos about places, embedded with official players on place pages",
+          "Onboarding: new users pick favorite categories (ruins, peaks, caves, waterfalls, etc.) from 16 options, personalized experience",
+          "Subscription system: Free/Premium for users, Basic/Pro/Enterprise for companies, Stripe integration ready, commission model (15%/10%/5%)",
+          "Full admin panel: place moderation queue, user management (roles/bans), comment moderation, category CRUD, geography CRUD, error logs, analytics, hero banner config, app settings with OTP protection",
+          "Notifications: in-app notification system with unread badge, mark-read, moderation results, booking confirmations",
+          "Smart search: global search across places, cities, countries with debouncing and request deduplication",
+          "Bilingual (ES/EN), dark mode, PWA (installable on phone), SEO sitemap with 5,500+ URLs, privacy/terms/GDPR compliance",
+          "Tech: Next.js 14, NestJS (27 modules), PostgreSQL, TypeScript, Tailwind CSS, Socket.IO, Leaflet, Stripe, Cloudflare R2, Storybook (66 stories), React Native/Expo (mobile)",
+        ],
+        beforeDescription: "",
+        afterDescription: "",
+        notes: "",
+        youtubeId: "",
+        techStack: [
+          "Next.js 14",
+          "NestJS",
+          "PostgreSQL",
+          "TypeScript",
+          "Tailwind CSS",
+          "Socket.IO",
+          "Leaflet",
+          "Stripe",
+          "Cloudflare R2",
+          "Storybook",
+        ],
+        liveUrl: "https://urbexcompany.com",
+        media: [
+          { type: "image", src: "/media/business/home.png", caption: "Homepage -- 'Descubre lugares que nadie mas conoce' with hero, stats (837 places, 196 countries)" },
+          { type: "image", src: "/media/business/home-dark.png", caption: "Homepage in dark mode -- full dark theme with mountain hero background" },
+          { type: "image", src: "/media/business/explore.png", caption: "Explore page -- browse by category (Lugares Famosos, Ruinas Antiguas, Templos)" },
+          { type: "image", src: "/media/business/place-detail.png", caption: "Place detail -- Teatro Bolshoi (Moscow) with photo, category badge, description" },
+          { type: "image", src: "/media/business/place-detail-mobile.png", caption: "Place detail on mobile -- responsive layout with actions (share, like, mark visited)" },
+          { type: "image", src: "/media/business/pricing.png", caption: "Pricing page -- Free vs Premium plans for explorers and companies" },
+          { type: "image", src: "/media/business/leaderboard.png", caption: "Leaderboard -- gamification with XP, levels, and ranking" },
+          { type: "image", src: "/media/business/tours.png", caption: "Tours page -- create group trips or plan personal itineraries" },
+          { type: "image", src: "/media/business/nearby.png", caption: "Nearby places -- find exploration sites near your location" },
+          { type: "image", src: "/media/business/trending.png", caption: "Trending places -- most popular places by likes" },
+          { type: "image", src: "/media/business/chats.png", caption: "Chat rooms -- location-based real-time chat for explorers" },
+          { type: "image", src: "/media/business/home-mobile.png", caption: "Mobile homepage -- responsive design with bottom navigation" },
+          { type: "image", src: "/media/business/explore-mobile.png", caption: "Mobile explore -- categories and place cards on phone" },
+          { type: "image", src: "/media/business/home-features.png", caption: "How it works section -- 3 simple steps to start exploring" },
+          { type: "image", src: "/media/business/login.png", caption: "Login page -- authentication with social options" },
+        ],
+        stats: [
+          { label: "Real Places", value: "5,532" },
+          { label: "Countries", value: "196" },
+          { label: "Features", value: "47 pages" },
+          { label: "Revenue", value: "$0" },
+        ],
+        whatILearned: "The biggest lesson is that building a full product before checking if people will pay for it is the most expensive way to test an idea. Urbex works as a product -- it's live, it has data, people can use it. But the business side is completely unproven. Zero paying customers. The adventure travel market is $550B+ and growing 15% a year, the urbex community on Reddit alone is 2.2M+ people, and the hiking app market is $1.8B. The opportunity is real. But AllTrails already proved the model with 65M users and $130M+ ARR, and Atlas Obscura just hit $18M revenue. The question isn't whether people pay for exploration tools -- they do. The question is whether Urbex can carve out a niche that those players aren't serving. The answer is yes: nobody does urbex + trip planning + gamification + community in one product. But that answer is worthless without paying customers to prove it. Next step: 10 conversations with tour operators this week.",
+        toolsUsed: [
+          "Lean Canvas",
+          "RICE Framework",
+          "TAM/SAM/SOM",
+          "Competitive Analysis",
+          "Unit Economics",
+          "Customer Interviews",
+        ],
+        proposedImprovements: [
+          {
+            title: "1. The customer and the problem",
+            description:
+              "PRIMARY CUSTOMER: Adventure travelers and urban explorers, 18-35 years old. People who want to explore beyond the typical tourist spots -- abandoned buildings, hidden waterfalls, ruins, off-the-beaten-path destinations.\n\nSECONDARY CUSTOMER: Tour operators and adventure companies who offer experiences in non-mainstream destinations.\n\nTHE PROBLEM: Information about exploration sites is scattered across 5+ tools with no integration between them. There's no single platform to discover, plan, and track visits to non-mainstream destinations.\n\nHOW THEY SOLVE IT TODAY:\n- Reddit (r/urbanexploration: 2.2M members, r/AbandonedPorn: 2.5M+): Great photos, but no maps, no trip planning, and locations are actively hidden\n- Google Maps: Has coordinates but zero community, no exploration-specific info, no way to track what you've visited\n- Facebook groups: People share tips but search is terrible, posts get buried in days, no structure\n- AllTrails (65M users): Great for hiking but ONLY hiking -- no urban exploration, no abandoned sites, no cultural destinations\n- Atlas Obscura (3.9M monthly visitors, 31,000+ places): Beautiful curated articles but you can't contribute, can't plan trips, can't connect with other explorers\n- Komoot (50M users): Route planning for cycling/hiking, but same limitation -- no discovery, no community beyond routes\n\nJOB TO BE DONE: 'When I'm planning my next adventure trip, I want to find real places other explorers have been to, see honest photos, and plan a trip around them -- without spending hours piecing together Reddit threads and Google Maps pins.'",
+            skills: ["Problem-Solution Fit", "JTBD"],
+          },
+          {
+            title: "2. Competitive landscape",
+            description:
+              "DETAILED COMPETITOR ANALYSIS:\n\nAtlas Obscura:\n- Revenue: $18.3M in 2025 (first profitable year ever, after 16 years)\n- Model: 65% brand partnerships, plus trips/experiences and entertainment content\n- 31,000+ places, 3.9M monthly visitors\n- Strength: editorial quality, brand trust\n- Gap: no user contributions, no trip planning, no social features, no gamification\n\nAllTrails:\n- Revenue: $130M+ ARR estimated (2025)\n- Valuation: $800M+ (private)\n- Users: 65M registered, 5-7% paid conversion\n- Premium: $35.99/year\n- Strength: massive community, proven freemium model\n- Gap: hiking/running ONLY. Zero urban exploration, no abandoned sites, no cultural destinations\n\nKomoot:\n- Revenue: ~$40M (2024)\n- Users: 50M registered\n- Acquired by Bending Spoons in 2025 (85% of team let go)\n- Strength: route planning, offline maps, Garmin integration\n- Gap: same as AllTrails -- outdoor sports only, no discovery community\n\nGoogle Maps: universal but no community, no exploration features, no gamification\nReddit: passionate but no tools, no structure, locations hidden on purpose\n\nWHY URBEX WINS:\nNobody combines structured exploration data (5,500+ places) + trip planning + gamification + community chat + company bookings in one product. The closest comparison would be Atlas Obscura's content + AllTrails' tracking + TripIt's planning + Discord's community. That product doesn't exist. Urbex is building it.",
+            skills: ["Competitive Analysis"],
+          },
+          {
+            title: "3. Market size (TAM / SAM / SOM)",
+            description:
+              "TAM (Total Addressable Market):\nThe global adventure tourism market is valued at $550B+ in 2025, growing at 15-18% CAGR. The hiking apps market alone is $1.8B. The broader travel apps market is $60B+ in revenue.\n\nSAM (Serviceable Available Market):\nAdventure travelers who actively seek non-mainstream destinations and would use a digital platform. Reddit's urbex/adventure communities alone have 5M+ combined members. AllTrails has 65M users. Atlas Obscura gets 3.9M monthly visitors. Conservative estimate of digitally active adventure travelers globally: 20-30M people.\n\nIf 5% of a 25M SAM would consider a specialized exploration platform:\n- SAM = 1.25M potential users\n\nSOM (Serviceable Obtainable Market) - Year 1:\nWith organic SEO (5,500+ indexed pages), Reddit community marketing, and word of mouth:\n- Realistic Year 1 target: 10,000-25,000 registered users\n- At 2-5% premium conversion (industry benchmark for travel apps is 2.4%):\n- 200-1,250 paying users at $4.99/mo = $12K-$75K ARR from B2C\n- Plus B2B: 5-15 tour companies at $29/mo = $1.7K-$5.2K ARR\n- Year 1 realistic revenue: $15K-$80K\n\nTo break even on hosting costs (~$50/mo Railway + Vercel + R2): need just 10 premium users. The bar is low.\n\nCOMPARABLE EXITS:\n- AllTrails: valued at $800M+ with $130M ARR\n- Komoot: acquired by Bending Spoons (2025), undisclosed price, $40M revenue\n- Atlas Obscura: $18.3M revenue, profitable after 16 years",
+            skills: ["TAM/SAM/SOM", "Market Sizing"],
+          },
+          {
+            title: "4. The experiment and what I learned",
+            description:
+              "BIGGEST ASSUMPTION: Explorers will use a dedicated platform instead of their current scattered workflow (Reddit + Maps + spreadsheets).\n\nWHAT I DID: Built and launched the full product at urbexcompany.com. Seeded it with 5,532 real places from public sources (Wikimedia Commons, Wikidata, 364 UNESCO sites). Put it in front of real users.\n\nRESULTS:\n- Place discovery is the #1 activity -- people spend the most time browsing by country and category\n- The world map (visited tracking) is the stickiest feature -- seeing exploration progress keeps people coming back\n- Trip planning is used but secondary -- people discover first, plan later\n- Mobile is the primary device (70%+ of sessions)\n- Photo quality determines engagement -- places with bad photos get zero clicks\n- Gamification creates initial excitement but retention past 30 days is unproven\n\nWHAT I STILL DON'T KNOW:\n1. Will users contribute places? (supply side -- currently all content is curated by me)\n2. Will tour companies pay? (B2B revenue -- portal built, 0 paying companies)\n3. Will users pay for Premium? (paywall not activated yet)\n4. Does gamification retain users beyond month 1? (no cohort data)\n5. Can SEO drive sustainable organic traffic? (5,500+ pages indexed but no traffic data yet)\n\nRISKIEST ASSUMPTION: The B2B side. If tour companies won't pay $29/mo, the entire revenue model needs to change. This is the first thing to validate.",
+            skills: ["Lean Experiment", "Assumptions"],
+          },
+          {
+            title: "5. The MVP -- what's in and what's out",
+            description:
+              "THE MVP (already live):\n1. Browse places by country and category\n2. Place detail with photos, map, description\n3. Mark places as visited, personal world map\n4. User accounts with profiles\n\nThat's 4 features. The core question they answer: 'Will people browse exploration sites and come back to track their progress?'\n\nWHAT'S OUT OF THE MVP (built but not essential):\n- Gamification (nice to have, not core)\n- Trip planning (secondary to discovery)\n- GPS route recording (power user feature)\n- Chat rooms (requires critical mass)\n- Company portal (B2B, validate separately)\n- Group trips (requires users to invite friends)\n\nWHY THIS MVP AND NOT LESS:\nA place listing without visited tracking is just a directory (boring). The world map is what creates the 'come back' loop -- it turns passive browsing into active progress tracking. Without it, there's no retention hook.\n\nHOW IT WAS BUILT:\n- Frontend: Next.js 14 on Vercel (free tier possible)\n- Backend: NestJS on Railway ($5/mo)\n- Database: PostgreSQL on Railway\n- Media: Cloudflare R2 (free tier for <10GB)\n- Total hosting cost: ~$50/month\n\nHOW I TESTED IT:\nDeployed live, shared with target users, observed usage. Place browsing and world map got the most engagement. That validates the core loop.",
+            skills: ["MVP", "Build-Measure-Learn"],
+          },
+          {
+            title: "6. Business model and unit economics",
+            description:
+              "REVENUE STREAMS:\n\n1. B2C Subscriptions (primary):\n- Free: browse, mark visited, basic profile\n- Premium ($4.99/mo or $35.99/yr): trip planning, GPS routes, advanced stats, leaderboard priority, offline access\n- Benchmark: AllTrails charges $35.99/yr and converts 5-7% of 65M users\n\n2. B2B Company Plans:\n- Basic (free): list 3 services, 15% commission on bookings\n- Pro ($29/mo): unlimited services, 10% commission, analytics dashboard\n- Enterprise ($99/mo): 5% commission, featured placement, API access\n\n3. Future: brand partnerships with tourism boards (Atlas Obscura makes 65% of revenue this way)\n\nUNIT ECONOMICS:\n- Customer Acquisition Cost (CAC): target $5-15 per user via organic SEO + Reddit (industry median for travel is $78, but organic channels are much cheaper)\n- Average Revenue Per User (ARPU): $0.25/mo blended (most users free, premium at $4.99)\n- Lifetime Value (LTV): at 6-month avg retention, LTV = $1.50 blended, $30 for premium users\n- LTV/CAC ratio: 3:1 minimum target (need CAC under $10 for premium users)\n\nBREAK-EVEN:\n- Monthly hosting: ~$50\n- Break-even: 10 premium users ($49.90/mo)\n- To cover my time ($2,000/mo part-time): 400 premium users or 15 Pro companies\n\nYEAR 1 PROJECTION (conservative):\n- 10,000 registered users, 250 premium (2.5% conversion)\n- 10 companies on Pro plan\n- Revenue: $250 * $4.99 + 10 * $29 = $1,537/mo = $18.4K ARR\n- Costs: $50 hosting + $0 marketing (organic) = $600/yr\n- Profit: ~$17.8K (before my time)",
+            skills: ["Unit Economics", "Revenue Model"],
+          },
+          {
+            title: "7. Go-to-market strategy",
+            description:
+              "PHASE 1: Organic growth (months 1-3)\n- SEO: 5,500+ place pages with unique content, targeting long-tail searches like 'abandoned [place] [city]', '[country] hidden places', 'urbex [city]'\n- Reddit: share curated lists on r/urbanexploration (2.2M), r/AbandonedPorn (2.5M), r/travel (9M), r/backpacking (1.5M). Not spamming -- genuine community participation with links to relevant places\n- The 364 UNESCO World Heritage Sites as evergreen content magnets\n- Goal: 5,000 registered users, 100 premium conversions\n\nPHASE 2: Community and content (months 3-6)\n- Enable user place submissions (turn users into contributors)\n- Instagram/TikTok: exploration content with 'found on Urbex' watermarks\n- Partner with 5-10 urbex YouTubers/TikTokers for featured places\n- Launch referral program: invite a friend, both get 1 month free Premium\n- Goal: 15,000 users, 500 premium, 5 companies\n\nPHASE 3: B2B outreach (months 6-12)\n- Direct outreach to adventure tour operators in top 20 countries\n- Offer 3-month free Pro plan as trial\n- Feature their services on relevant place pages (contextual, not ads)\n- Goal: 25,000 users, 1,000 premium, 15 companies\n\nFIRST PAYING CUSTOMERS:\n- B2B: talk to 10 tour operators this week. The question: 'Would you pay $29/mo for a platform that shows your services to people who are already planning trips to your area?'\n- B2C: don't paywall until 1,000 MAU. Users need to feel the value before being asked to pay.",
+            skills: ["Go-to-Market", "Growth"],
+          },
+          {
+            title: "8. Risks, mitigations, and pivot triggers",
+            description:
+              "TOP 5 RISKS:\n\n1. Nobody pays (revenue risk)\n- Probability: HIGH -- the paywall is untested\n- Mitigation: validate B2B first (lower volume, higher willingness to pay). If B2B fails, test brand partnerships like Atlas Obscura before trying B2C subscriptions\n- Pivot trigger: 0/10 tour operators interested -> kill B2B, test ads/partnerships\n\n2. No user-generated content (supply risk)\n- Probability: MEDIUM -- contributing requires effort, and people are protective of locations\n- Mitigation: make submission dead simple (photo + pin + category). Offer XP rewards for contributions. Start with UNESCO/public sites where location secrecy isn't an issue\n- Pivot trigger: <10 submissions in first month -> stay curated like Atlas Obscura instead of community-driven\n\n3. AllTrails expands into exploration (competitive risk)\n- Probability: LOW-MEDIUM -- they're focused on trails, acquisition by private equity suggests efficiency focus\n- Mitigation: move fast on the niche. AllTrails serves hikers; Urbex serves explorers. Different community, different content, different vibe\n\n4. User retention drops after novelty (engagement risk)\n- Probability: MEDIUM -- gamification often has a novelty curve\n- Mitigation: the world map is the real retention hook, not XP. People want to fill their map. Social features (group trips, chat) create network stickiness\n- Pivot trigger: D30 retention below 20% -> fundamental product rethink needed\n\n5. SEO doesn't deliver traffic (acquisition risk)\n- Probability: LOW -- 5,500+ unique pages with coordinates, photos, and descriptions should index well for long-tail queries\n- Mitigation: supplement with Reddit community engagement and social content\n\nWHAT WOULD MAKE ME GO ALL IN:\n- 3+ paying companies after trial period\n- 2%+ premium conversion rate\n- 40%+ D30 retention for users with 5+ visited places\n- 1,000+ organic sessions/month from SEO\n\nWHAT WOULD MAKE ME PIVOT:\n- Zero paying customers after 6 months\n- Premium conversion below 1%\n- D30 retention below 15%\n- If all three happen: this is a cool project, not a business. Pivot to content/media model (blog + affiliate) or open-source the platform.",
+            skills: ["Risk Assessment", "Pivot Criteria"],
+          },
+        ],
+        crossAreaInsights: [
+          {
+            fromArea: "PM",
+            color: "#34d399",
+            insight:
+              "PM week taught me to use RICE honestly. Place discovery scored high because it's simple and everyone would use it. The company portal scored low on confidence because I have zero proof that companies will pay. That's exactly why I'm not betting the business on B2B yet -- the framework showed me the risk.",
+          },
+          {
+            fromArea: "Backend",
+            color: "#22d3ee",
+            insight:
+              "The backend audit approach from the T-Shirt Store carried over directly. I traced the same kind of flows in Urbex (booking -> payment -> confirmation) and found similar issues -- race conditions in bookings, missing transaction boundaries. Same method, different codebase.",
+          },
+          {
+            fromArea: "QA",
+            color: "#f472b6",
+            insight:
+              "I tested Urbex the same way Paulo taught me to test MedApp: explore first, ask questions before reporting, don't confuse bugs with unfinished features. Found the exact same type of timezone bug in trip scheduling.",
+          },
+          {
+            fromArea: "Design",
+            color: "#fb923c",
+            insight:
+              "The design mentor's 'measure, don't assume' stuck with me. I checked contrast on the dark theme, ensured 44px touch targets on mobile, and built a Storybook with 66 stories. The CLAUDE.md guardrail approach from Vello shaped how I work with Claude on this project too.",
+          },
+          {
+            fromArea: "Frontend",
+            color: "#6366f1",
+            insight:
+              "The frontend code review fixes applied directly: debounced search, loading states everywhere, proper handling of concurrent actions like likes/saves. The concurrency theme from Ricardo's feedback shows up in every project.",
+          },
+          {
+            fromArea: "AI",
+            color: "#a78bfa",
+            insight:
+              "The 8 Claude Code skills I built were made for this codebase. Every skill (/investigate-task, /verify-change, /security-check) solves a recurring problem in the 27-module backend. They're what let me maintain this project solo.",
+          },
         ],
       },
     ],
