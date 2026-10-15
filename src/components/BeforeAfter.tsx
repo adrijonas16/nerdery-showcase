@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 interface Props {
   before: string;
   after: string;
+  beforeLabel?: string;
+  afterLabel?: string;
 }
 
-export function BeforeAfter({ before, after }: Props) {
+export function BeforeAfter({ before, after, beforeLabel = "Before", afterLabel = "After" }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -54,7 +56,7 @@ export function BeforeAfter({ before, after }: Props) {
               margin: 0,
             }}
           >
-            Before
+            {beforeLabel}
           </h3>
         </div>
         <div style={{ padding: "24px" }}>
@@ -107,7 +109,7 @@ export function BeforeAfter({ before, after }: Props) {
               margin: 0,
             }}
           >
-            After
+            {afterLabel}
           </h3>
         </div>
         <div style={{ padding: "24px" }}>

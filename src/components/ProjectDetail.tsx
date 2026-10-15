@@ -23,9 +23,11 @@ import { LiveComparison } from "./LiveComparison";
 interface Props {
   project: Project;
   areaColor: string;
+  areaId?: string;
 }
 
-export function ProjectDetail({ project, areaColor }: Props) {
+export function ProjectDetail({ project, areaColor, areaId }: Props) {
+  const isBusiness = areaId === "business";
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -333,7 +335,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
             icon={
               <ClipboardList style={{ width: "20px", height: "20px" }} />
             }
-            title="What was required"
+            title={isBusiness ? "What to cover" : "What was required"}
             color="#fb923c"
             delay={0.15}
           >
@@ -372,6 +374,8 @@ export function ProjectDetail({ project, areaColor }: Props) {
             <BeforeAfter
               before={project.beforeDescription}
               after={project.afterDescription}
+              beforeLabel={isBusiness ? "The customer and the problem" : "Before"}
+              afterLabel={isBusiness ? "Competitors and positioning" : "After"}
             />
           )}
 
@@ -399,7 +403,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
           {/* Improvements */}
           <SectionCard
             icon={<Zap style={{ width: "20px", height: "20px" }} />}
-            title="What we improved"
+            title={isBusiness ? "What the product does" : "What we improved"}
             color="#34d399"
             delay={0.2}
           >
@@ -437,7 +441,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
           {project.notes && (
             <SectionCard
               icon={<FileText style={{ width: "20px", height: "20px" }} />}
-              title="Notes"
+              title={isBusiness ? "Experiment and learnings" : "Notes"}
               color="#f472b6"
               delay={0.25}
             >
@@ -467,7 +471,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
 
           {/* Cross-area insights */}
           {project.crossAreaInsights && project.crossAreaInsights.length > 0 && (
-            <CrossAreaInsights insights={project.crossAreaInsights} areaColor={areaColor} />
+            <CrossAreaInsights insights={project.crossAreaInsights} areaColor={areaColor} areaId={areaId} />
           )}
 
           {/* What I learned + How to improve */}
@@ -477,6 +481,7 @@ export function ProjectDetail({ project, areaColor }: Props) {
               proposedImprovements={project.proposedImprovements}
               toolsUsed={project.toolsUsed ?? []}
               areaColor={areaColor}
+              areaId={areaId}
             />
           )}
 

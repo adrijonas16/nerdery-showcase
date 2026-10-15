@@ -16,6 +16,7 @@ interface Props {
   proposedImprovements: ProposedImprovement[];
   toolsUsed: string[];
   areaColor: string;
+  areaId?: string;
 }
 
 export function ImprovementSection({
@@ -23,7 +24,9 @@ export function ImprovementSection({
   proposedImprovements,
   toolsUsed,
   areaColor,
+  areaId,
 }: Props) {
+  const isBusiness = areaId === "business";
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
   return (
@@ -64,7 +67,7 @@ export function ImprovementSection({
             <GraduationCap style={{ width: "20px", height: "20px" }} />
           </div>
           <h3 style={{ color: "#fff", fontWeight: 600, fontSize: "16px", margin: 0 }}>
-            What I learned
+            {isBusiness ? "Key takeaway" : "What I learned"}
           </h3>
         </div>
         <div style={{ padding: "24px" }}>
@@ -179,7 +182,7 @@ export function ImprovementSection({
             <Rocket style={{ width: "20px", height: "20px" }} />
           </div>
           <h3 style={{ color: "#fff", fontWeight: 600, fontSize: "16px", margin: 0 }}>
-            How we'd improve it
+            {isBusiness ? "The lean startup plan" : "How we'd improve it"}
           </h3>
           <span
             style={{

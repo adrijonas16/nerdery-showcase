@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ExternalLink, Code, GitPullRequest } from "lucide-react";
 import type { Area, Project } from "../data/projects";
 import { ProjectDetail } from "./ProjectDetail";
+import { BusinessPage } from "./BusinessPage";
 
 interface Props {
   area: Area;
@@ -308,8 +309,10 @@ export function AreaPage({
               ))}
             </div>
           </>
+        ) : area.id === "business" ? (
+          <BusinessPage project={selectedProject} areaColor={area.color} />
         ) : (
-          <ProjectDetail project={selectedProject} areaColor={area.color} />
+          <ProjectDetail project={selectedProject} areaColor={area.color} areaId={area.id} />
         )}
       </div>
     </motion.div>

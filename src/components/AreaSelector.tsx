@@ -6,6 +6,7 @@ import {
   Palette,
   ClipboardList,
   Bot,
+  Rocket,
 } from "lucide-react";
 import type { Area } from "../data/projects";
 
@@ -19,6 +20,7 @@ const iconMap: Record<
   Palette,
   ClipboardList,
   Bot,
+  Rocket,
 };
 
 interface Props {

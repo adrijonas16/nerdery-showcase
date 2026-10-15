@@ -5,9 +5,10 @@ import type { CrossAreaInsight } from "../data/projects";
 interface Props {
   insights: CrossAreaInsight[];
   areaColor: string;
+  areaId?: string;
 }
 
-export function CrossAreaInsights({ insights, areaColor }: Props) {
+export function CrossAreaInsights({ insights, areaColor, areaId }: Props) {
   if (!insights.length) return null;
 
   return (
@@ -46,7 +47,7 @@ export function CrossAreaInsights({ insights, areaColor }: Props) {
           <Layers style={{ width: "20px", height: "20px" }} />
         </div>
         <h3 style={{ color: "#fff", fontWeight: 600, fontSize: "16px", margin: 0 }}>
-          Applying learnings from other areas
+          {areaId === "business" ? "How the Nerdery shaped this project" : "Applying learnings from other areas"}
         </h3>
       </div>
 
